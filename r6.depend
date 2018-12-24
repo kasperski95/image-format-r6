@@ -1,0 +1,31 @@
+# depslib dependency file v1.0
+1545655336 source:c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\r6\main.cpp
+	<iostream>
+
+1545690435 source:c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\main.cpp
+	<iostream>
+	<vector>
+	<cstring>
+	<string>
+	<algorithm>
+	"lib/File.h"
+	"r6.h"
+
+1545667547 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\src\file.h
+	<string>
+
+1545690562 source:c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\file.cpp
+	"File.h"
+	<string>
+	<functional>
+
+1545684117 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\file.h
+	<string>
+
+1545688695 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\r6.h
+	<vector>
+	"r6/Exceptions.h"
+
+1545689871 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\r6\exceptions.h
+	<exception>
+
