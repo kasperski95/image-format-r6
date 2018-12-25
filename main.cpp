@@ -3,7 +3,9 @@
 #include <cstring>
 #include <string>
 #include <algorithm>
-#include "lib/File.h"
+#include "lib/Filepath.h"
+#include "lib/ImageFormats/ImageBuffer.h"
+#include "lib/ImageFormats/BMP.h"
 #include "r6.h"
 
 
@@ -12,7 +14,7 @@ void printHelp();
 
 int main(int nArg, char* args[]) {
     std::vector<std::string> allowedExts {"r6", "bmp"};
-    File source, output;
+    Filepath source, output;
 
     r6::EMode mode;
     bool dithering = false;
@@ -48,13 +50,13 @@ int main(int nArg, char* args[]) {
 
             // source file
             if (!source.initialized()) {
-                source.filepath(args[i]);
+                source.init(args[i]);
                 continue;
             }
 
             // output file
             if (!output.initialized()) {
-                output.filepath(args[i]);
+                output.init(args[i]);
                 continue;
             }
         }
@@ -66,6 +68,12 @@ int main(int nArg, char* args[]) {
         (output.initialized() && none_of( allowedExts.begin(), allowedExts.end(), [&output](std::string ext){return ext == output.ext();}))) {
             throw r6::bad_syntax();
         }
+
+        ImageBuffer buffer;
+        BMP bmp;
+        bmp.load(source, &buffer);
+        bmp.save(output, &buffer);
+
 
     } catch (std::exception& e) {
         std::cerr << e.what() << std::endl;
@@ -86,6 +94,7 @@ void printHelp() {
     cout << "mode: dedicated" << endl;
     cout << "dithering: enabled" << endl;
     cout << "output: the same file path, but with r6 extension if source extension is bmp and vice versa" << endl;
+    cout << endl;
     cout << "EXAMPLES:" << endl;
     cout << "r6.exe -m fixed -d foo.bmp bar.r6" << endl;
     cout << "Convert image to r6 format using fixed color palette and use dithering." << endl;

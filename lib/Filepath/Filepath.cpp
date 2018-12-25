@@ -1,21 +1,23 @@
-#include "File.h"
+#include "../Filepath.h"
 #include <string>
 #include <functional> //bad_function_call
 
 using namespace std;
 
-File::File(string filepath) {
+Filepath::Filepath(string filepath) {
     if (!filepath.empty())
-        this->filepath(filepath);
+        this->init(filepath);
 }
 
-void File::filepath(string filepath) {
+void Filepath::init(string filepath) {
     int endOfPath = filepath.find_last_of("/\\");
     int endOfFilename = filepath.find_first_of(".");
 
     if(endOfFilename == -1) {
         throw bad_function_call();
     }
+
+    _raw = filepath;
 
     if (endOfPath != -1) {
         _path = filepath.substr(0, endOfPath);
@@ -29,7 +31,8 @@ void File::filepath(string filepath) {
 
 }
 
-const char* File::path() {return _path.c_str();}
-const char* File::filename() {return _filename.c_str();}
-const char* File::ext() {return _ext.c_str();}
-bool File::initialized() {return !_path.empty() || !_filename.empty() || !_ext.empty();}
+const char* Filepath::path() const {return _path.c_str();}
+const char* Filepath::filename() const {return _filename.c_str();}
+const char* Filepath::ext() const {return _ext.c_str();}
+const char* Filepath::raw() const {return _raw.c_str();}
+bool Filepath::initialized() {return !_raw.empty();}
