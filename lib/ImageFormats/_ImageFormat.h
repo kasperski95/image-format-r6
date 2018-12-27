@@ -1,6 +1,6 @@
 #pragma once
 #include "../Filepath.h"
-#include "../Color.h"
+#include "../DataStructures/Color.h"
 #include "ImageBuffer.h"
 
 class ImageFormat {

@@ -11,7 +11,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="test.bmp" />
+				<Option parameters="source.bmp output.bmp" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
@@ -33,17 +33,18 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="lib/Color.h" />
+		<Unit filename="lib/DataStructures/Color.h" />
+		<Unit filename="lib/DataStructures/Point.h" />
 		<Unit filename="lib/Filepath.h" />
 		<Unit filename="lib/Filepath/Filepath.cpp" />
 		<Unit filename="lib/ImageFormats/BMP.cpp" />
 		<Unit filename="lib/ImageFormats/BMP.h" />
 		<Unit filename="lib/ImageFormats/ImageBuffer.cpp" />
 		<Unit filename="lib/ImageFormats/ImageBuffer.h" />
+		<Unit filename="lib/ImageFormats/R6.cpp" />
+		<Unit filename="lib/ImageFormats/R6.h" />
 		<Unit filename="lib/ImageFormats/_ImageFormat.h" />
 		<Unit filename="main.cpp" />
-		<Unit filename="r6.h" />
-		<Unit filename="r6/Exceptions.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

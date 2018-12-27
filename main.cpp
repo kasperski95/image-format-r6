@@ -6,14 +6,14 @@
 #include "lib/Filepath.h"
 #include "lib/ImageFormats/ImageBuffer.h"
 #include "lib/ImageFormats/BMP.h"
-#include "r6.h"
+#include "lib/ImageFormats/R6.h"
 
 
 void printHelp();
 
 
 int main(int nArg, char* args[]) {
-    std::vector<std::string> allowedExts {"r6", "bmp"};
+    std::vector<std::string> allowedExts {"R6", "bmp"};
     Filepath source, output;
 
     r6::EMode mode;
@@ -72,6 +72,11 @@ int main(int nArg, char* args[]) {
         ImageBuffer buffer;
         BMP bmp;
         bmp.load(source, &buffer);
+
+       buffer.useDedicatedPalette(6);
+       /* buffer.useFixedPalette(palette);
+        * buffer.convertToGrayscale(nBits);
+        */
         bmp.save(output, &buffer);
 
 
@@ -96,10 +101,10 @@ void printHelp() {
     cout << "output: the same file path, but with r6 extension if source extension is bmp and vice versa" << endl;
     cout << endl;
     cout << "EXAMPLES:" << endl;
-    cout << "r6.exe -m fixed -d foo.bmp bar.r6" << endl;
-    cout << "Convert image to r6 format using fixed color palette and use dithering." << endl;
+    cout << "R6.exe -m fixed -d foo.bmp bar.r6" << endl;
+    cout << "Convert image to R6 format using fixed color palette and use dithering." << endl;
     cout << endl;
-    cout << "r6.exe bar.r6 foo.bmp" << endl;
+    cout << "R6.exe bar.r6 foo.bmp" << endl;
     cout << "Convert image to bmp format." << endl;
     cout << endl;
     cout << "ABOUT R6:" << endl;

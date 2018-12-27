@@ -2,7 +2,7 @@
 1545655336 source:c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\r6\main.cpp
 	<iostream>
 
-1545768160 source:c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\main.cpp
+1545834183 source:c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\main.cpp
 	<iostream>
 	<vector>
 	<cstring>
@@ -11,7 +11,7 @@
 	"lib/Filepath.h"
 	"lib/ImageFormats/ImageBuffer.h"
 	"lib/ImageFormats/BMP.h"
-	"r6.h"
+	"lib/ImageFormats/R6.h"
 
 1545667547 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\src\file.h
 	<string>
@@ -39,24 +39,24 @@
 1545754040 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\filepath.h
 	<string>
 
-1545771862 source:c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\bmp.cpp
-	"BMP.h"
-	"_ImageFormat.h"
+1545774501 source:c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\bmp.cpp
 	<Windows.h>
 	<fstream>
 	<cassert>
-	<iostream>
+	"_ImageFormat.h"
+	"BMP.h"
 
-1545759554 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\_imageformat.h
+1545832261 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\_imageformat.h
 	"../Filepath.h"
-	"../Color.h"
+	"../DataStructures/Color.h"
 	"ImageBuffer.h"
 
 1545758923 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\color.h
 
-1545759795 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\imagebuffer.h
+1545931850 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\imagebuffer.h
 	<vector>
-	"../Color.h"
+	"../DataStructures/Color.h"
+	"../DataStructures/Point.h"
 
 1255804050 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\sdl\include\sdl.h
 	"SDL_main.h"
@@ -238,10 +238,25 @@
 	"begin_code.h"
 	"close_code.h"
 
-1545769033 source:c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\imagebuffer.cpp
+1545937945 source:c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\imagebuffer.cpp
 	"ImageBuffer.h"
+	<algorithm>
+	<iostream>
 
 1545767890 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\bmp.h
 	"_ImageFormat.h"
 	<string>
+
+1545774544 source:c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\r6.cpp
+	"R6.h"
+
+1545774589 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\r6.h
+	<exception>
+	"_ImageFormat.h"
+
+1545916029 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\datastructures\color.h
+	<iostream>
+
+1545906843 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\datastructures\point.h
+	<iostream>
 

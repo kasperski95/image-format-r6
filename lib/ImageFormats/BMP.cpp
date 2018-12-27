@@ -1,15 +1,16 @@
-#pragma once
-#include "BMP.h"
-#include "_ImageFormat.h"
 #include <Windows.h>
 #include <fstream>
 #include <cassert>
-#include <iostream>
+#include "_ImageFormat.h"
+#include "BMP.h"
+
+
 
 BMP::BMP() :
     _fileHeader(14, 0),
     _infoHeader(40, 0)
 {}
+
 
 void BMP::load(Filepath const &filepath, ImageBuffer* buffer) {
     std::ifstream file(filepath.raw(), std::ios::binary);
@@ -74,6 +75,7 @@ void BMP::_createFileHeader(ImageBuffer* buffer, int padding) {
 
     _fileHeader[10] = (unsigned char)(_fileHeader.size() + _infoHeader.size());
 }
+
 
 void BMP::_createInfoHeader(ImageBuffer* buffer){
     _infoHeader[0] = (unsigned char)(_infoHeader.size());
