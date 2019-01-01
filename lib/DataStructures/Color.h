@@ -23,7 +23,6 @@ struct Color {
         r += rhs.r;
         g += rhs.g;
         b += rhs.b;
-        a += rhs.a;
         return *this;
     }
 
@@ -31,11 +30,14 @@ struct Color {
         r *= x;
         g *= x;
         b *= x;
-        a *= x;
         return *this;
     }
 
     void print() {
         std::cout << "[" << r << " " << g << " " << b << "]";
+    }
+
+    Color<T> operator-(const Color<T> &rhs) {
+        return Color<T>(r - rhs.r, g - rhs.g, b - rhs.b);
     }
 };

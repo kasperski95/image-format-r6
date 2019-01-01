@@ -12,11 +12,22 @@
 void printHelp();
 
 
-int main(int nArg, char* args[]) {
-    std::vector<std::string> allowedExts {"R6", "bmp"};
-    Filepath source, output;
+struct bad_syntax : public std::exception {
+    const char* what() const noexcept override {
+        return "Incorrect syntax.";
+    }
+};
 
-    r6::EMode mode;
+struct bad_file_extension : public std::exception {
+    const char* what() const noexcept override {
+        return "Incorrect extension.";
+    }
+};
+
+int main(int nArg, char* args[]) {
+    std::vector<std::string> allowedExts {"r6", "bmp"};
+    Filepath source, output;
+    R6 r6;
     bool dithering = false;
     try {
         for (int i = 1; i < nArg; ++i) {
@@ -30,15 +41,15 @@ int main(int nArg, char* args[]) {
             if (strcmp(args[i], "-m") == 0 || strcmp(args[i], "--mode") == 0) {
                 if (nArg >= i+3) {
                     if (strcmp(args[i+1], "dedicated") == 0) {
-                        mode = r6::EMode::DEDICATED; i++; continue;
+                        r6.mode = R6::Mode::DEDICATED; i++; continue;
                     } else if (strcmp(args[i+1], "fixed") == 0) {
-                        mode = r6::EMode::FIXED; i++; continue;
+                        r6.mode = R6::Mode::FIXED; i++; continue;
                     } else if (strcmp(args[i+1], "grayscale") == 0) {
-                        mode = r6::EMode::GRAYSCALE; i++; continue;
+                        r6.mode = R6::Mode::GRAYSCALE; i++; continue;
                     }
-                    throw r6::bad_syntax();
+                    throw bad_syntax();
                 } else {
-                    throw r6::bad_syntax();
+                    throw bad_syntax();
                 }
             }
 
@@ -66,18 +77,22 @@ int main(int nArg, char* args[]) {
         if (!source.initialized() ||
         none_of(allowedExts.begin(), allowedExts.end(), [&source](std::string ext){return ext == source.ext();}) ||
         (output.initialized() && none_of( allowedExts.begin(), allowedExts.end(), [&output](std::string ext){return ext == output.ext();}))) {
-            throw r6::bad_syntax();
+            throw bad_syntax();
         }
 
-        ImageBuffer buffer;
+        ImageBuffer buffer, buffer2;
         BMP bmp;
+
         bmp.load(source, &buffer);
 
-       buffer.useDedicatedPalette(6);
+        buffer.useDedicatedPalette(6);
        /* buffer.useFixedPalette(palette);
         * buffer.convertToGrayscale(nBits);
         */
-        bmp.save(output, &buffer);
+        r6.save(output, &buffer);
+        r6.load(output, &buffer2);
+        output.ext("bmp");
+        bmp.save(output, &buffer2);
 
 
     } catch (std::exception& e) {

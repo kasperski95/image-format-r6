@@ -3,28 +3,26 @@
 #include "_ImageFormat.h"
 
 class R6 : public ImageFormat {
+    struct Header {
+        uint8_t version;
+        uint8_t mode;
+        uint8_t offset;
+        uint8_t paletteSize;
+        uint32_t fileSize;
+        uint32_t width;
+        uint32_t height;
+    };
 public:
-    void load(Filepath const &filepath, ImageBuffer* buffer) override;
-    void save(Filepath const &filepath, ImageBuffer* buffer) override;
-};
+    R6();
 
-//TODO: refactor
-namespace r6 {
-    enum class EMode {
+    enum class Mode {
         DEDICATED,
         FIXED,
-        GRAYSCALE,
+        GRAYSCALE
     };
+    Mode mode;
+    void load(Filepath &filepath, ImageBuffer* buffer) override;
+    void save(Filepath &filepath, ImageBuffer* buffer) override;
 
-    struct bad_syntax : public std::exception {
-        const char* what() const noexcept override {
-            return "Incorrect syntax.";
-        }
-    };
 
-    struct bad_file_extension : public std::exception {
-        const char* what() const noexcept override {
-            return "Incorrect extension.";
-        }
-    };
-}
+};

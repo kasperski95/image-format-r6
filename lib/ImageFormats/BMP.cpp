@@ -12,51 +12,52 @@ BMP::BMP() :
 {}
 
 
-void BMP::load(Filepath const &filepath, ImageBuffer* buffer) {
+void BMP::load(Filepath &filepath, ImageBuffer* buffer) {
     std::ifstream file(filepath.raw(), std::ios::binary);
-    assert(file);
+    if (file) {
+        BITMAPFILEHEADER bmFileHeader;
+        file.read(reinterpret_cast<char*>(&bmFileHeader), sizeof(bmFileHeader));
 
-    BITMAPFILEHEADER bmFileHeader;
-    file.read(reinterpret_cast<char*>(&bmFileHeader), sizeof(bmFileHeader));
+        BITMAPINFOHEADER bmInfoHeader;
+        file.read(reinterpret_cast<char*>(&bmInfoHeader), sizeof(bmInfoHeader));
 
-    BITMAPINFOHEADER bmInfoHeader;
-    file.read(reinterpret_cast<char*>(&bmInfoHeader), sizeof(bmInfoHeader));
+        //TODO: handle more depths
+        assert(bmInfoHeader.biBitCount == 24);
+        assert(bmInfoHeader.biCompression == BI_RGB);
 
-    //TODO: handle more depths
-    assert(bmInfoHeader.biBitCount == 24);
-    assert(bmInfoHeader.biCompression == BI_RGB);
+        buffer->init(bmInfoHeader.biWidth, bmInfoHeader.biHeight);
 
-    buffer->init(bmInfoHeader.biWidth, bmInfoHeader.biHeight);
-
-    file.seekg(bmFileHeader.bfOffBits);
-    const int padding = (4 - (buffer->width() * 3) % 4) % 4;
-    for (int y = buffer->height() - 1; y >= 0; --y) {
-        for (int x = 0; x < buffer->width(); ++x) {
-            buffer->px(x, y, Color<unsigned int>(file.get(), file.get(), file.get()));
+        file.seekg(bmFileHeader.bfOffBits);
+        const int padding = (4 - (buffer->width() * 3) % 4) % 4;
+        for (int y = buffer->height() - 1; y >= 0; --y) {
+            for (int x = 0; x < buffer->width(); ++x) {
+                buffer->px(x, y, Color<unsigned int>(file.get(), file.get(), file.get()));
+            }
+            file.seekg(padding, std::ios::cur);
         }
-        file.seekg(padding, std::ios::cur);
     }
 }
 
 
-void BMP::save(Filepath const &filepath, ImageBuffer* buffer) {
+void BMP::save(Filepath &filepath, ImageBuffer* buffer) {
     std::ofstream file(filepath.raw(), std::ios::binary);
-    assert(file);
 
-    int padding = (4 - (buffer->width() * _bytesPerPixel) % 4) % 4;
+    if (file) {
+        int padding = (4 - (buffer->width() * _bytesPerPixel) % 4) % 4;
 
-    _createFileHeader(buffer, padding);
-    _createInfoHeader(buffer);
+        _createFileHeader(buffer, padding);
+        _createInfoHeader(buffer);
 
-    file << _fileHeader;
-    file << _infoHeader;
+        file << _fileHeader;
+        file << _infoHeader;
 
-    for (int y = buffer->height() - 1; y >= 0; --y) {
-        for (int x = 0; x < buffer->width(); ++x) {
-            file << (char)buffer->px(x,y).b << (char)buffer->px(x,y).g << (char)buffer->px(x,y).r;
-        }
-        for (int x = 0; x < padding; ++x) {
-            file << 0;
+        for (int y = buffer->height() - 1; y >= 0; --y) {
+            for (int x = 0; x < buffer->width(); ++x) {
+                file << (char)buffer->px(x,y).b << (char)buffer->px(x,y).g << (char)buffer->px(x,y).r;
+            }
+            for (int x = 0; x < padding; ++x) {
+                file << 0;
+            }
         }
     }
 }

@@ -5,8 +5,8 @@
 class BMP : public ImageFormat{
 public:
     BMP();
-    void load(Filepath const &filepath, ImageBuffer* buffer) override;
-    void save(Filepath const &filepath, ImageBuffer* buffer) override;
+    void load(Filepath &filepath, ImageBuffer* buffer) override;
+    void save(Filepath &filepath, ImageBuffer* buffer) override;
 
 private:
     void _createFileHeader(ImageBuffer* buffer, int paddingSize);

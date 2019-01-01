@@ -7,10 +7,14 @@ class Filepath {
 public:
     Filepath(std::string filepath="");
     void init(std::string filepath);
+    void readBits(std::string &output);
+    void writeBits(std::string bitstring);
+
     const char* path() const;
     const char* filename() const;
     const char* ext() const;
     const char* raw() const;
+    void ext(const char* newExt);
     bool initialized();
 
 private:
