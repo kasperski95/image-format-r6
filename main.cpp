@@ -85,10 +85,11 @@ int main(int nArg, char* args[]) {
 
         bmp.load(source, &buffer);
 
-        buffer.useDedicatedPalette(6);
+        buffer.useDedicatedPalette(64);
        /* buffer.useFixedPalette(palette);
         * buffer.convertToGrayscale(nBits);
         */
+        buffer.dither(buffer.palette());
         r6.save(output, &buffer);
         r6.load(output, &buffer2);
         output.ext("bmp");

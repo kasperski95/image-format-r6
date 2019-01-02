@@ -12,23 +12,33 @@ public:
     void useDedicatedPalette(int nColors);
     void updateIndexMatrix(std::vector<Color<unsigned int>> const &palette);
     void updateBuffer();
+    void dither(std::vector<Color<colorType>> const &palette);
 
     void px(int x, int y, Color<colorType> color);
+    void index(int x, int y, int index);
     void width(int width);
     void height(int height);
     void palette(Color<colorType> color);
-    void index(int x, int y, int index);
 
     Color<colorType> px(int x, int y);
+    std::vector<Color<colorType>> palette();
     Color<colorType> palette(int index);
     int paletteSize();
     int index(int x, int y);
     int width();
     int height();
 
-private:
 
-    // octree
+private:
+    std::vector<std::vector<Color<colorType>>> _buffer;
+
+    std::vector<std::vector<int>> _indexMatrix;
+
+    int _width;
+    int _height;
+    int _depth;
+
+    // used by dedicated palette generator
     struct Node{
         Node* parent;
         std::vector<Point<int>> pixels;
@@ -47,13 +57,4 @@ private:
     Color<colorType> _quantify(Node* node);
     void _selectNodes(int amount, std::vector<Node*> &selected, int index=0);
     std::vector<Color<colorType>> _palette;
-    std::vector<std::vector<int>> _indexMatrix;
-
-    // buffer
-    std::vector<std::vector<Color<colorType>>> _buffer;
-    int _width;
-    int _height;
-    int _depth;
-
-
 };

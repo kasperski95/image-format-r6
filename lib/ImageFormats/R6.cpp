@@ -18,9 +18,14 @@ void R6::load(Filepath &filepath, ImageBuffer* buffer) {
     file.read(reinterpret_cast<char*>(&header), sizeof(header));
 
 
+    std::cout << std::endl;
     // read palette
     for (int i = 0; i < header.paletteSize; ++i) {
-        buffer->palette(Color<colorType>(file.get(), file.get(), file.get()));
+        char r = file.get();
+        char g = file.get();
+        char b = file.get();
+        buffer->palette(Color<colorType>(r, g, b));
+        //Color<colorType>(file.get(), file.get(), file.get()).print();
     }
 
     // read indexMatrix
@@ -89,39 +94,42 @@ void R6::save(Filepath &filepath, ImageBuffer* buffer) {
         }
 
         // data (Rice algorithm)
-        // palette size is fixed: 64 and m = 64 => 0 + <binary code>
         std::string bitstring;
         int index;
         switch(mode) {
-        case Mode::DEDICATED:
-            for (int y = 0; y < buffer->height(); ++y) {
-                for (int x = 0; x < buffer->width(); ++x) {
-                    bitstring += '0';
-                    index = buffer->index(x, y);
-                    for (int i = 5; i >= 0; --i) {
-                        bitstring += (index >> i) % 2 + '0';
+            case Mode::DEDICATED:
+                for (int y = 0; y < buffer->height(); ++y) {
+                    for (int x = 0; x < buffer->width(); ++x) {
+                        bitstring += '0';
+                        index = buffer->index(x, y);
+                        for (int i = 5; i >= 0; --i) {
+                            bitstring += (index >> i) % 2 + '0';
+                        }
                     }
                 }
-            }
-            //std::cout << bitstring;
 
-            {
-                // pad with zeroes to make it represent an integral multiple of bytes
-                while(bitstring.size() % 8)
-                    bitstring += '0';
+                // saving bitstring
+                {
+                    // pad with zeroes to make it represent an integral multiple of bytes
+                    while(bitstring.size() % 8)
+                        bitstring += '0';
 
-                unsigned char b;
-                for(int i = 0; i < bitstring.size(); i += 8) {
-                    b = std::bitset<8>(bitstring.substr(i, 8)).to_ulong();
-                    file.put(b);
+                    unsigned char b;
+                    for(int i = 0; i < bitstring.size(); i += 8) {
+                        b = std::bitset<8>(bitstring.substr(i, 8)).to_ulong();
+                        file.put(b);
+                    }
                 }
-
-            }
-        break;
+            break;
+            case Mode::FIXED:
+                //TODO: implement
+            break;
+            case Mode::GRAYSCALE:
+                //TODO: implement
+            break;
         }
 
         file.close();
-
     }
 }
 

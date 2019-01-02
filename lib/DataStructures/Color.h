@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <cmath>
 
 template <typename T>
 struct Color {
@@ -15,6 +16,10 @@ struct Color {
         a = p_a;
     }
 
+    void print() {
+        std::cout << "[" << r << " " << g << " " << b << "]";
+    }
+
     bool operator!= (Color<T> const &col) {
         return r != col.r || g != col.g || b != col.b;
     }
@@ -26,18 +31,19 @@ struct Color {
         return *this;
     }
 
-    Color<T> operator*(float x) {
-        r *= x;
-        g *= x;
-        b *= x;
-        return *this;
-    }
-
-    void print() {
-        std::cout << "[" << r << " " << g << " " << b << "]";
+    Color<T> operator*(double x) {
+        return Color<T>(round(r * x), round(g * x), round(b * x));
     }
 
     Color<T> operator-(const Color<T> &rhs) {
         return Color<T>(r - rhs.r, g - rhs.g, b - rhs.b);
+    }
+
+    Color<T> operator+(const Color<T> &rhs) {
+        return Color<T>(r + rhs.r, g + rhs.g, b + rhs.b);
+    }
+
+    bool operator<(const Color<T> &rhs) {
+        return (abs(r) + abs(g) + abs(b)) < (abs(rhs.r) + abs(rhs.g) + abs(rhs.b));
     }
 };
