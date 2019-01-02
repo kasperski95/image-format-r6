@@ -5,10 +5,14 @@
 #include <math.h>
 #include <utility>      // pair
 
+
+
 ImageBuffer::ImageBuffer(int widthToSet, int heightToSet, int depthToSet) {
     this->init(widthToSet, heightToSet, depthToSet);
     _root = nullptr;
+    _grayscale = false;
 }
+
 
 void ImageBuffer::init(int widthToSet, int heightToSet, int depthToSet) {
     _width = widthToSet;
@@ -28,6 +32,7 @@ void ImageBuffer::init(int widthToSet, int heightToSet, int depthToSet) {
         }
     }
 }
+
 
 void ImageBuffer::useDedicatedPalette(int nColors) {
     // generate octree
@@ -50,11 +55,8 @@ void ImageBuffer::useDedicatedPalette(int nColors) {
        _palette[i].print();
     }
 
-
-    // bind pixels using universal algorithm
-    this->updateIndexMatrix(_palette);
-
     // sort palette by popularity of colors
+    this->updateIndexMatrix();
     {
         using colorOccurance = std::pair<int,int>;
         std::vector<colorOccurance> occurances(_palette.size());
@@ -74,11 +76,8 @@ void ImageBuffer::useDedicatedPalette(int nColors) {
             std::swap(_palette[i], _palette[occurances[i].first]);
         }
     }
-
-    // bind again pixels using universal algorithm
-    this->updateIndexMatrix(_palette);
+    this->updateIndexMatrix();
 }
-
 
 
 void ImageBuffer::updateBuffer() {
@@ -90,23 +89,16 @@ void ImageBuffer::updateBuffer() {
 }
 
 
-int ImageBuffer::index(int x, int y) {
-    return _indexMatrix[x][y];
-}
-
-
-void ImageBuffer::palette(Color<colorType> color) {_palette.push_back(color);}
-
-
-void ImageBuffer::updateIndexMatrix(std::vector<Color<colorType>> const &palette) {
-    //assuming that color space is linear
-
-    assert(palette.size() > 0);
+void ImageBuffer::updateIndexMatrix() {
     int bestIndex, minColorDistance, distance;
     for (int y = 0; y < _height; ++y) {
         for (int x = 0; x < _width; ++x) {
-            for (int i = 0; i < palette.size(); ++i) {
-                distance = abs(_buffer[x][y].r - palette[i].r) + abs(_buffer[x][y].g - palette[i].g) + abs(_buffer[x][y].b - palette[i].b);
+            for (int i = 0; i < _palette.size(); ++i) {
+                if (!_grayscale)
+                    distance = abs(_buffer[x][y].r - _palette[i].r) + abs(_buffer[x][y].g - _palette[i].g) + abs(_buffer[x][y].b - _palette[i].b);
+                else
+                    distance = abs(_buffer[x][y].r - _palette[i].r) * 0.299 + abs(_buffer[x][y].g - _palette[i].g) * 0.587 + abs(_buffer[x][y].b - _palette[i].b) * 0.114;
+
                 if (i == 0) {
                     bestIndex = 0;
                     minColorDistance = distance;
@@ -121,26 +113,25 @@ void ImageBuffer::updateIndexMatrix(std::vector<Color<colorType>> const &palette
             _indexMatrix[x][y] = bestIndex;
         }
     }
-
 }
 
 
-void ImageBuffer::dither(std::vector<Color<colorType>> const &palette) {
-    std::vector<std::vector<Color<long>>> errors;
+void ImageBuffer::dither() {
+    std::vector<std::vector<Color>> errors;
     errors.resize(_width + 1);
     for(int i = 0; i < errors.size(); ++i)
         errors[i].resize(_height + 1);
 
-    Color<long> error, minError;
+    Color error, minError;
     int colorID;
 
     for (int y = 0; y < _height; ++y) {
         for (int x = 0; x < _width; ++x) {
 
-            for (int i = 0; i < palette.size(); ++i) {
-                error.r = _buffer[x][y].r + errors[x][y].r - palette[i].r;
-                error.g = _buffer[x][y].g + errors[x][y].g - palette[i].g;
-                error.b = _buffer[x][y].b + errors[x][y].b - palette[i].b;
+            for (int i = 0; i < _palette.size(); ++i) {
+                error.r = _buffer[x][y].r + errors[x][y].r - _palette[i].r;
+                error.g = _buffer[x][y].g + errors[x][y].g - _palette[i].g;
+                error.b = _buffer[x][y].b + errors[x][y].b - _palette[i].b;
                 if (i == 0) {
                     colorID = 0;
                     minError = error;
@@ -154,7 +145,7 @@ void ImageBuffer::dither(std::vector<Color<colorType>> const &palette) {
             }
 
            // std::cout << colorID << " ";
-            _buffer[x][y] = palette[colorID];
+            _buffer[x][y] = _palette[colorID];
             errors[x][y+1] += minError * (7.f/16);
             if (y > 0)
                 errors[x+1][y-1] += minError * (3.f/16);
@@ -163,12 +154,7 @@ void ImageBuffer::dither(std::vector<Color<colorType>> const &palette) {
         }
     }
 
-    this->updateIndexMatrix(palette);
-}
-
-
-std::vector<Color<colorType>> ImageBuffer::palette() {
-    return _palette;
+    this->updateIndexMatrix();
 }
 
 
@@ -198,7 +184,7 @@ void ImageBuffer::_selectNodes(int limit, std::vector<Node*> &selected, int inde
             selected.pop_back();
         } else {
             // update node's color based on not included children
-            selected[index]->color = Color<colorType>();
+            selected[index]->color = Color();
             for (; i < selected[index]->children.size(); ++i) {
                 selected[index]->color += selected[index]->children[i].color * ((float)selected[index]->children[i].pixels.size() / (selected[index]->pixels.size() - pixelsToSubtract));
             }
@@ -212,10 +198,10 @@ void ImageBuffer::_selectNodes(int limit, std::vector<Node*> &selected, int inde
 }
 
 
-Color<colorType> ImageBuffer::_quantify(Node* node) {
+Color ImageBuffer::_quantify(Node* node) {
     if (node) {
         if (node->pixels.size() == 0)
-            return Color<colorType>();
+            return Color();
 
         // base case
         for (int i = 0; i < node->pixels.size(); ++i) {
@@ -254,14 +240,19 @@ Color<colorType> ImageBuffer::_quantify(Node* node) {
     }
 }
 
-void ImageBuffer::px(int x, int y, Color<colorType> color) {_buffer[x][y] = color;}
+
+void ImageBuffer::palette(std::vector<Color> paletteToSet) {_palette = paletteToSet; this->updateIndexMatrix();}
+void ImageBuffer::palette(Color color) {_palette.push_back(color);}
+void ImageBuffer::px(int x, int y, Color color) {_buffer[x][y] = color;}
 void ImageBuffer::width(int widthToSet) {_width = widthToSet;}
 void ImageBuffer::height(int heightToSet) {_height = heightToSet;}
 void ImageBuffer::index(int x, int y, int newIndex) {_indexMatrix[x][y] = newIndex;}
+void ImageBuffer::grayscale(bool value) {_grayscale = value;}
 
-Color<colorType> ImageBuffer::px(int x, int y) {return _buffer[x][y];}
-Color<colorType> ImageBuffer::palette(int index) {return _palette[index];}
+std::vector<Color> ImageBuffer::palette() {return _palette;}
+Color ImageBuffer::px(int x, int y) {return _buffer[x][y];}
+Color ImageBuffer::palette(int index) {return _palette[index];}
 int ImageBuffer::paletteSize() {return _palette.size();}
 int ImageBuffer::width() {return _width;}
 int ImageBuffer::height() {return _height;}
-
+int ImageBuffer::index(int x, int y) {return _indexMatrix[x][y];}

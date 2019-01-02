@@ -2,14 +2,13 @@
 #include <iostream>
 #include <cmath>
 
-template <typename T>
 struct Color {
-    T r;
-    T g;
-    T b;
-    T a;
+    long r;
+    long g;
+    long b;
+    long a;
 
-    Color(T p_r = 0, T p_g = 0, T p_b = 0, T p_a = 255) {
+    Color(long p_r = 0, long p_g = 0, long p_b = 0, long p_a = 255) {
         r = p_r;
         g = p_g;
         b = p_b;
@@ -20,30 +19,30 @@ struct Color {
         std::cout << "[" << r << " " << g << " " << b << "]";
     }
 
-    bool operator!= (Color<T> const &col) {
+    bool operator!= (Color const &col) {
         return r != col.r || g != col.g || b != col.b;
     }
 
-    Color<T>& operator+=(const Color<T> &rhs){
+    Color& operator+=(const Color &rhs){
         r += rhs.r;
         g += rhs.g;
         b += rhs.b;
         return *this;
     }
 
-    Color<T> operator*(double x) {
-        return Color<T>(round(r * x), round(g * x), round(b * x));
+    Color operator*(double x) {
+        return Color(round(r * x), round(g * x), round(b * x));
     }
 
-    Color<T> operator-(const Color<T> &rhs) {
-        return Color<T>(r - rhs.r, g - rhs.g, b - rhs.b);
+    Color operator-(const Color &rhs) {
+        return Color(r - rhs.r, g - rhs.g, b - rhs.b);
     }
 
-    Color<T> operator+(const Color<T> &rhs) {
-        return Color<T>(r + rhs.r, g + rhs.g, b + rhs.b);
+    Color operator+(const Color &rhs) {
+        return Color(r + rhs.r, g + rhs.g, b + rhs.b);
     }
 
-    bool operator<(const Color<T> &rhs) {
-        return (abs(r) + abs(g) + abs(b)) < (abs(rhs.r) + abs(rhs.g) + abs(rhs.b));
+    bool operator<(const Color &rhs) {
+        return (abs(r)*0.299 + abs(g)*0.587 + abs(b)*0.114) < (abs(rhs.r)*0.299 + abs(rhs.g)*0.587 + abs(rhs.b)*0.114);
     }
 };

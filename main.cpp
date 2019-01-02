@@ -84,18 +84,15 @@ int main(int nArg, char* args[]) {
         BMP bmp;
 
         bmp.load(source, &buffer);
-
-        buffer.useDedicatedPalette(64);
-       /* buffer.useFixedPalette(palette);
-        * buffer.convertToGrayscale(nBits);
-        */
-        buffer.dither(buffer.palette());
+        //buffer.useDedicatedPalette(64);
+        buffer.grayscale(true);
+        r6.mode = R6::Mode::GRAYSCALE;
+        buffer.palette(r6.palette());
+        //buffer.dither();
         r6.save(output, &buffer);
         r6.load(output, &buffer2);
         output.ext("bmp");
         bmp.save(output, &buffer2);
-
-
     } catch (std::exception& e) {
         std::cerr << e.what() << std::endl;
         return 1;
@@ -116,16 +113,10 @@ void printHelp() {
     cout << "dithering: enabled" << endl;
     cout << "output: the same file path, but with r6 extension if source extension is bmp and vice versa" << endl;
     cout << endl;
-    cout << "EXAMPLES:" << endl;
+    cout << "EXAMPLES OF USE:" << endl;
     cout << "R6.exe -m fixed -d foo.bmp bar.r6" << endl;
     cout << "Convert image to R6 format using fixed color palette and use dithering." << endl;
     cout << endl;
     cout << "R6.exe bar.r6 foo.bmp" << endl;
     cout << "Convert image to bmp format." << endl;
-    cout << endl;
-    cout << "ABOUT R6:" << endl;
-    cout << "- raster graphics file format" << endl;
-    cout << "- uses 6-bits to store RGB colors" << endl;
-    cout << "- uses Rice compression algorithm" << endl;
-    cout << "- supports: fixed color palette, dedicated color palette, grayscale" << endl;
 }

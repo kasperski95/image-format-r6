@@ -31,7 +31,7 @@ void BMP::load(Filepath &filepath, ImageBuffer* buffer) {
         const int padding = (4 - (buffer->width() * 3) % 4) % 4;
         for (int y = buffer->height() - 1; y >= 0; --y) {
             for (int x = 0; x < buffer->width(); ++x) {
-                buffer->px(x, y, Color<unsigned int>(file.get(), file.get(), file.get()));
+                buffer->px(x, y, Color(file.get(), file.get(), file.get()));
             }
             file.seekg(padding, std::ios::cur);
         }

@@ -8,6 +8,23 @@
 
 R6::R6() {
     this->mode = Mode::DEDICATED;
+
+    // generate palette
+    int r, g, b;
+    std::vector<int> values {0, 85, 170, 255};
+    for (int i = 0; i < 64; ++i) {
+        r = (i & 0b00000011);
+        g = (i & 0b00001100) >> 2;
+        b = (i & 0b00110000) >> 4;
+        _palette.push_back(Color(values[r], values[g], values[b]));
+    }
+
+    // generate grayscale palette
+    for (int i = 0; i < 62; i++) {
+        _grayscale.push_back(Color(i*4, i*4, i*4));
+    }
+    _grayscale.push_back(Color(249,249,249));
+    _grayscale.push_back(Color(255,255,255));
 }
 
 
@@ -17,16 +34,24 @@ void R6::load(Filepath &filepath, ImageBuffer* buffer) {
     Header header;
     file.read(reinterpret_cast<char*>(&header), sizeof(header));
 
-
-    std::cout << std::endl;
     // read palette
-    for (int i = 0; i < header.paletteSize; ++i) {
-        char r = file.get();
-        char g = file.get();
-        char b = file.get();
-        buffer->palette(Color<colorType>(r, g, b));
-        //Color<colorType>(file.get(), file.get(), file.get()).print();
+    switch(mode) {
+        case Mode::DEDICATED:
+            for (int i = 0; i < header.paletteSize; ++i) {
+            char r = file.get();
+            char g = file.get();
+            char b = file.get();
+            buffer->palette(Color(r, g, b));
+        }
+        break;
+        case Mode::FIXED:
+            buffer->palette(_palette);
+        break;
+        case Mode::GRAYSCALE:
+            buffer->palette(_grayscale);
+        break;
     }
+
 
     // read indexMatrix
     buffer->init(header.width, header.height);
@@ -56,7 +81,6 @@ void R6::load(Filepath &filepath, ImageBuffer* buffer) {
     }
 
     buffer->updateBuffer();
-
 }
 
 
@@ -67,8 +91,10 @@ void R6::save(Filepath &filepath, ImageBuffer* buffer) {
         Header header;
         header.version = 1;
         header.mode = 1;
-        header.offset = sizeof(Header) + (64 * 3);
-        header.paletteSize = buffer->paletteSize();
+        header.paletteSize = 0;
+        if (mode == Mode::DEDICATED)
+            header.paletteSize = buffer->paletteSize();
+        header.offset = sizeof(Header) + header.paletteSize * 3;
         header.fileSize = 0; //TODO
         header.width = buffer->width();
         header.height = buffer->height();
@@ -93,45 +119,42 @@ void R6::save(Filepath &filepath, ImageBuffer* buffer) {
             }
         }
 
-        // data (Rice algorithm)
+        // data
+        // TODO: Rice algorithm
         std::string bitstring;
         int index;
-        switch(mode) {
-            case Mode::DEDICATED:
-                for (int y = 0; y < buffer->height(); ++y) {
-                    for (int x = 0; x < buffer->width(); ++x) {
-                        bitstring += '0';
-                        index = buffer->index(x, y);
-                        for (int i = 5; i >= 0; --i) {
-                            bitstring += (index >> i) % 2 + '0';
-                        }
-                    }
+        for (int y = 0; y < buffer->height(); ++y) {
+            for (int x = 0; x < buffer->width(); ++x) {
+                bitstring += '0';
+                index = buffer->index(x, y);
+                for (int i = 5; i >= 0; --i) {
+                    bitstring += (index >> i) % 2 + '0';
                 }
-
-                // saving bitstring
-                {
-                    // pad with zeroes to make it represent an integral multiple of bytes
-                    while(bitstring.size() % 8)
-                        bitstring += '0';
-
-                    unsigned char b;
-                    for(int i = 0; i < bitstring.size(); i += 8) {
-                        b = std::bitset<8>(bitstring.substr(i, 8)).to_ulong();
-                        file.put(b);
-                    }
-                }
-            break;
-            case Mode::FIXED:
-                //TODO: implement
-            break;
-            case Mode::GRAYSCALE:
-                //TODO: implement
-            break;
+            }
         }
 
+        _saveBitstring(file, bitstring);
         file.close();
     }
 }
 
 
+const std::vector<Color>& R6::palette() {
+    if (mode == Mode::GRAYSCALE)
+        return _grayscale;
+    return _palette;
+};
+
+
+void R6::_saveBitstring(std::ofstream &file, std::string &bitstring) {
+    // pad with zeroes to make it represent an integral multiple of bytes
+    while(bitstring.size() % 8)
+        bitstring += '0';
+
+    unsigned char b;
+    for(int i = 0; i < bitstring.size(); i += 8) {
+        b = std::bitset<8>(bitstring.substr(i, 8)).to_ulong();
+        file.put(b);
+    }
+}
 
