@@ -2,7 +2,7 @@
 #include <vector>
 #include <cstring>
 #include <string>
-#include <algorithm>
+#include <algorithm>                        // none_of
 #include "lib/Filepath.h"
 #include "lib/ImageFormats/ImageBuffer.h"
 #include "lib/ImageFormats/BMP.h"
@@ -24,10 +24,15 @@ struct bad_file_extension : public std::exception {
     }
 };
 
+//=================================================================
+
 int main(int nArg, char* args[]) {
     std::vector<std::string> allowedExts {"r6", "bmp"};
     Filepath source, output;
+    ImageBuffer buffer;
     R6 r6;
+    BMP bmp;
+
     bool dithering = false;
     try {
         for (int i = 1; i < nArg; ++i) {
@@ -80,19 +85,43 @@ int main(int nArg, char* args[]) {
             throw bad_syntax();
         }
 
-        ImageBuffer buffer, buffer2;
-        BMP bmp;
 
-        bmp.load(source, &buffer);
-        //buffer.useDedicatedPalette(64);
-        buffer.grayscale(true);
-        r6.mode = R6::Mode::GRAYSCALE;
-        buffer.palette(r6.palette());
-        //buffer.dither();
-        r6.save(output, &buffer);
-        r6.load(output, &buffer2);
-        output.ext("bmp");
-        bmp.save(output, &buffer2);
+        // core
+        {
+            // loading
+            if (strcmp(source.ext(), "bmp") == 0) {
+                bmp.load(source, &buffer);
+
+                // choosing palette
+                switch(r6.mode) {
+                    case R6::Mode::DEDICATED:
+                        buffer.generatePalette(64);
+                    break;
+                    case R6::Mode::FIXED:
+                        buffer.palette(r6.palette());
+                    break;
+                    case R6::Mode::GRAYSCALE:
+                        buffer.palette(r6.palette());
+                        buffer.grayscale(true);
+                    break;
+                }
+
+                // dithering
+                if (dithering) {
+                    buffer.dither();
+                }
+            } else if (strcmp(source.ext(), "r6") == 0) {
+                r6.load(source, &buffer);
+            }
+
+            // saving
+            if (strcmp(output.ext(), "bmp") == 0) {
+                bmp.save(output, &buffer);
+            } else if (strcmp(output.ext(), "r6") == 0) {
+                r6.save(output, &buffer);
+            }
+        }
+
     } catch (std::exception& e) {
         std::cerr << e.what() << std::endl;
         return 1;
@@ -100,6 +129,7 @@ int main(int nArg, char* args[]) {
     return 0;
 }
 
+//=================================================================
 
 void printHelp() {
     using namespace std;

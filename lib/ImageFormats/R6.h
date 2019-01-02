@@ -4,6 +4,8 @@
 #include <fstream>
 #include "_ImageFormat.h"
 
+
+
 class R6 : public ImageFormat {
 public:
     struct Header {
@@ -23,16 +25,23 @@ public:
     };
     Mode mode;
 
+    //-----------------------------------------------------------------
+
     R6();
 
+    // CORE
     void load(Filepath &filepath, ImageBuffer* buffer) override;
-
     void save(Filepath &filepath, ImageBuffer* buffer) override;
 
+    // GETTERS
     const std::vector<Color>& palette();
+
+
 private:
     std::vector<Color> _palette;
     std::vector<Color> _grayscale;
+
+    //-----------------------------------------------------------------
 
     void _saveBitstring(std::ofstream &file, std::string &bitstring);
 };

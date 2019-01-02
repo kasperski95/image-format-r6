@@ -1,21 +1,24 @@
-#ifndef FILE_H_INCLUDED
-#define FILE_H_INCLUDED
-
+#pragma once
 #include <string>
+
+
 
 class Filepath {
 public:
     Filepath(std::string filepath="");
-    void init(std::string filepath);
-    void readBits(std::string &output);
-    void writeBits(std::string bitstring);
 
+    // CORE
+    void init(std::string filepath);
+
+    // GETTERS
     const char* path() const;
     const char* filename() const;
     const char* ext() const;
     const char* raw() const;
-    void ext(const char* newExt);
     bool initialized();
+
+    // SETTERS
+    void ext(const char* newExt);
 
 private:
     std::string _path;
@@ -23,5 +26,3 @@ private:
     std::string _ext;
     std::string _raw;
 };
-
-#endif

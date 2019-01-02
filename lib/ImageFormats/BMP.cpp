@@ -12,6 +12,7 @@ BMP::BMP() :
 {}
 
 
+// CORE
 void BMP::load(Filepath &filepath, ImageBuffer* buffer) {
     std::ifstream file(filepath.raw(), std::ios::binary);
     if (file) {
@@ -62,6 +63,7 @@ void BMP::save(Filepath &filepath, ImageBuffer* buffer) {
     }
 }
 
+//=================================================================
 
 void BMP::_createFileHeader(ImageBuffer* buffer, int padding) {
     int fileSize = _fileHeader.size() + _infoHeader.size() + (_bytesPerPixel* buffer->width() + padding) * buffer->height();

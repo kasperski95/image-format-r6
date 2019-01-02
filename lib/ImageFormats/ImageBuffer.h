@@ -8,12 +8,26 @@
 class ImageBuffer {
 public:
     ImageBuffer(int width=0, int height=0, int depth=8);
-    void init(int width, int height, int depth=-1);
-    void useDedicatedPalette(int nColors);
-    void updateIndexMatrix();
-    void updateBuffer();
+    void init(int width, int height, int colorDepth=-1);
+
+    // GENERATORS
+    void generatePalette(int nColors);  // from buffer
+    void generateMatrix();              // from buffer & matrix
+    void generateBuffer();              // from palette & matrix
+
+    // DITHERING
     void dither();
 
+    // GETTERS
+    std::vector<Color> palette();
+    Color px(int x, int y);
+    Color palette(int index);
+    int paletteSize();
+    int index(int x, int y);
+    int width();
+    int height();
+
+    // SETTERS
     void px(int x, int y, Color color);
     void index(int x, int y, int index);
     void width(int width);
@@ -22,25 +36,18 @@ public:
     void palette(Color color);
     void grayscale(bool grayscale);
 
-    Color px(int x, int y);
-    std::vector<Color> palette();
-    Color palette(int index);
-    int paletteSize();
-    int index(int x, int y);
-    int width();
-    int height();
-
 
 private:
     std::vector<std::vector<Color>> _buffer;
     std::vector<std::vector<int>> _indexMatrix;
+    std::vector<Color> _palette;
 
     int _width;
     int _height;
     int _depth;
     bool _grayscale;
 
-    // used by dedicated palette generator
+    // USED BY DEDICATED PALETTE GENERATOR
     struct Node{
         Node* parent;
         std::vector<Point<int>> pixels;
@@ -56,7 +63,9 @@ private:
         }
     };
     Node* _root;
+
+    //-----------------------------------------------------------------
+
     Color _quantify(Node* node);
     void _selectNodes(int amount, std::vector<Node*> &selected, int index=0);
-    std::vector<Color> _palette;
 };

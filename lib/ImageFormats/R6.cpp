@@ -2,7 +2,6 @@
 #include <fstream>
 #include <bitset>
 #include <cmath>
-#include "../Filepath.h"
 #include "R6.h"
 
 
@@ -28,11 +27,21 @@ R6::R6() {
 }
 
 
+// CORE
 void R6::load(Filepath &filepath, ImageBuffer* buffer) {
     std::ifstream file(filepath.raw(), std::ios::binary);
+    if (!file) {
+        throw bad_sourceFile();
+    }
 
     Header header;
     file.read(reinterpret_cast<char*>(&header), sizeof(header));
+
+    switch(header.mode) {
+        case 1: this->mode = Mode::DEDICATED; break;
+        case 2: this->mode = Mode::FIXED; break;
+        case 3: this->mode = Mode::GRAYSCALE; break;
+    }
 
     // read palette
     switch(mode) {
@@ -62,25 +71,23 @@ void R6::load(Filepath &filepath, ImageBuffer* buffer) {
     while(file.get(c))
         bitstring += std::bitset<8>((unsigned char)c).to_string();
 
-    {
-        int index, x = 0, y = 0;
-        for (int i = 0; i < bitstring.size() - 7; i += 7) {
-            index = 0;
+    int index, x = 0, y = 0;
+    for (int i = 0; i < bitstring.size() - 7; i += 7) {
+        index = 0;
 
-            for (int j = 1; j < 7; ++j) {
-                index += (bitstring[i+j] - '0') * pow(2, 6 - j);
-            }
+        for (int j = 1; j < 7; ++j) {
+            index += (bitstring[i+j] - '0') * pow(2, 6 - j);
+        }
 
-            buffer->index(x, y, index);
-            x++;
-            if (x >= header.width) {
-                x = 0;
-                y++;
-            }
+        buffer->index(x, y, index);
+        x++;
+        if (x >= header.width) {
+            x = 0;
+            y++;
         }
     }
 
-    buffer->updateBuffer();
+    buffer->generateBuffer();
 }
 
 
@@ -88,12 +95,20 @@ void R6::save(Filepath &filepath, ImageBuffer* buffer) {
     std::ofstream file(filepath.raw(), std::ios::binary);
 
     if (file) {
+        // prepare header
         Header header;
         header.version = 1;
-        header.mode = 1;
+
+        switch(mode) {
+            case Mode::DEDICATED: header.mode = 1; break;
+            case Mode::FIXED: header.mode = 2; break;
+            case Mode::GRAYSCALE: header.mode = 3; break;
+        }
+
         header.paletteSize = 0;
         if (mode == Mode::DEDICATED)
             header.paletteSize = buffer->paletteSize();
+
         header.offset = sizeof(Header) + header.paletteSize * 3;
         header.fileSize = 0; //TODO
         header.width = buffer->width();
@@ -139,12 +154,14 @@ void R6::save(Filepath &filepath, ImageBuffer* buffer) {
 }
 
 
+// GETTERS
 const std::vector<Color>& R6::palette() {
     if (mode == Mode::GRAYSCALE)
         return _grayscale;
     return _palette;
 };
 
+//=================================================================
 
 void R6::_saveBitstring(std::ofstream &file, std::string &bitstring) {
     // pad with zeroes to make it represent an integral multiple of bytes
@@ -157,4 +174,3 @@ void R6::_saveBitstring(std::ofstream &file, std::string &bitstring) {
         file.put(b);
     }
 }
-

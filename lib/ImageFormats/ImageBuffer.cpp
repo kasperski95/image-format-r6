@@ -1,9 +1,9 @@
-#include "ImageBuffer.h"
-#include <iostream>     // just for logging
+#include <iostream>     // for logging
 #include <algorithm>    // sort
 #include <cassert>
 #include <math.h>
 #include <utility>      // pair
+#include "ImageBuffer.h"
 
 
 
@@ -34,7 +34,8 @@ void ImageBuffer::init(int widthToSet, int heightToSet, int depthToSet) {
 }
 
 
-void ImageBuffer::useDedicatedPalette(int nColors) {
+// GENERATORS
+void ImageBuffer::generatePalette(int nColors) {
     // generate octree
     _root = new Node();
     for (int y = 0; y < _height; ++y) {
@@ -52,11 +53,10 @@ void ImageBuffer::useDedicatedPalette(int nColors) {
     // fill palette
     for (int i = 0; i < selectedNodes.size(); ++i) {
        _palette.push_back(selectedNodes[i]->color);
-       _palette[i].print();
     }
 
     // sort palette by popularity of colors
-    this->updateIndexMatrix();
+    this->generateMatrix();
     {
         using colorOccurance = std::pair<int,int>;
         std::vector<colorOccurance> occurances(_palette.size());
@@ -76,11 +76,11 @@ void ImageBuffer::useDedicatedPalette(int nColors) {
             std::swap(_palette[i], _palette[occurances[i].first]);
         }
     }
-    this->updateIndexMatrix();
+    this->generateMatrix();
 }
 
 
-void ImageBuffer::updateBuffer() {
+void ImageBuffer::generateBuffer() {
     for (int y = 0; y < _height; ++y) {
         for (int x = 0; x < _width; ++x) {
             _buffer[x][y] = _palette[_indexMatrix[x][y]];
@@ -89,7 +89,7 @@ void ImageBuffer::updateBuffer() {
 }
 
 
-void ImageBuffer::updateIndexMatrix() {
+void ImageBuffer::generateMatrix() {
     int bestIndex, minColorDistance, distance;
     for (int y = 0; y < _height; ++y) {
         for (int x = 0; x < _width; ++x) {
@@ -116,6 +116,7 @@ void ImageBuffer::updateIndexMatrix() {
 }
 
 
+// DITHERING
 void ImageBuffer::dither() {
     std::vector<std::vector<Color>> errors;
     errors.resize(_width + 1);
@@ -144,7 +145,6 @@ void ImageBuffer::dither() {
                 }
             }
 
-           // std::cout << colorID << " ";
             _buffer[x][y] = _palette[colorID];
             errors[x][y+1] += minError * (7.f/16);
             if (y > 0)
@@ -154,50 +154,11 @@ void ImageBuffer::dither() {
         }
     }
 
-    this->updateIndexMatrix();
+    this->generateMatrix();
 }
 
 
-void ImageBuffer::_selectNodes(int limit, std::vector<Node*> &selected, int index) {
-    if (selected[index]->children.size() > 0) {
-        bool addedAllChildren = true;
-        int i;
-        int pixelsToSubtract = 0;
-
-        // keep adding children to the selected list
-        for (i = 0; i < selected[index]->children.size(); ++i) {
-            if (selected.size() < limit || (selected.size() < limit && i == 7)) {
-                // add children to the list
-                if (selected[index]->children[i].pixels.size() > 0) {
-                    selected.push_back(&(selected[index]->children[i]));
-                    pixelsToSubtract += selected[index]->children[i].pixels.size();
-                }
-            } else {
-                addedAllChildren = false;
-                break;
-            }
-        }
-
-        if (addedAllChildren) {
-            // remove node from the selected list, because all children are included
-            std::swap(selected[index], selected[selected.size() - 1]);
-            selected.pop_back();
-        } else {
-            // update node's color based on not included children
-            selected[index]->color = Color();
-            for (; i < selected[index]->children.size(); ++i) {
-                selected[index]->color += selected[index]->children[i].color * ((float)selected[index]->children[i].pixels.size() / (selected[index]->pixels.size() - pixelsToSubtract));
-            }
-        }
-    }
-
-    // recurrence
-    if (index + 1 < selected.size()) {
-        _selectNodes(limit, selected, index + 1);
-    }
-}
-
-
+// DEDICATED PALETTE FROM OCTREE
 Color ImageBuffer::_quantify(Node* node) {
     if (node) {
         if (node->pixels.size() == 0)
@@ -241,14 +202,47 @@ Color ImageBuffer::_quantify(Node* node) {
 }
 
 
-void ImageBuffer::palette(std::vector<Color> paletteToSet) {_palette = paletteToSet; this->updateIndexMatrix();}
-void ImageBuffer::palette(Color color) {_palette.push_back(color);}
-void ImageBuffer::px(int x, int y, Color color) {_buffer[x][y] = color;}
-void ImageBuffer::width(int widthToSet) {_width = widthToSet;}
-void ImageBuffer::height(int heightToSet) {_height = heightToSet;}
-void ImageBuffer::index(int x, int y, int newIndex) {_indexMatrix[x][y] = newIndex;}
-void ImageBuffer::grayscale(bool value) {_grayscale = value;}
+void ImageBuffer::_selectNodes(int limit, std::vector<Node*> &selected, int index) {
+    if (selected[index]->children.size() > 0) {
+        bool addedAllChildren = true;
+        int i;
+        int pixelsToSubtract = 0;
 
+        // keep adding children to the selected list
+        for (i = 0; i < selected[index]->children.size(); ++i) {
+            if (selected.size() < limit || (selected.size() < limit && i == 7)) {
+                // add children to the list
+                if (selected[index]->children[i].pixels.size() > 0) {
+                    selected.push_back(&(selected[index]->children[i]));
+                    pixelsToSubtract += selected[index]->children[i].pixels.size();
+                }
+            } else {
+                addedAllChildren = false;
+                break;
+            }
+        }
+
+        if (addedAllChildren) {
+            // remove node from the selected list, because all children are included
+            std::swap(selected[index], selected[selected.size() - 1]);
+            selected.pop_back();
+        } else {
+            // update node's color based on not included children
+            selected[index]->color = Color();
+            for (; i < selected[index]->children.size(); ++i) {
+                selected[index]->color += selected[index]->children[i].color * ((float)selected[index]->children[i].pixels.size() / (selected[index]->pixels.size() - pixelsToSubtract));
+            }
+        }
+    }
+
+    // recurrence
+    if (index + 1 < selected.size()) {
+        _selectNodes(limit, selected, index + 1);
+    }
+}
+
+
+// GETTERS
 std::vector<Color> ImageBuffer::palette() {return _palette;}
 Color ImageBuffer::px(int x, int y) {return _buffer[x][y];}
 Color ImageBuffer::palette(int index) {return _palette[index];}
@@ -256,3 +250,14 @@ int ImageBuffer::paletteSize() {return _palette.size();}
 int ImageBuffer::width() {return _width;}
 int ImageBuffer::height() {return _height;}
 int ImageBuffer::index(int x, int y) {return _indexMatrix[x][y];}
+
+// SETTERS
+void ImageBuffer::palette(std::vector<Color> paletteToSet) {_palette = paletteToSet; this->generateMatrix();}
+void ImageBuffer::palette(Color color) {_palette.push_back(color);}
+void ImageBuffer::px(int x, int y, Color color) {_buffer[x][y] = color;}
+void ImageBuffer::width(int widthToSet) {_width = widthToSet;}
+void ImageBuffer::height(int heightToSet) {_height = heightToSet;}
+void ImageBuffer::index(int x, int y, int newIndex) {_indexMatrix[x][y] = newIndex;}
+void ImageBuffer::grayscale(bool value) {_grayscale = value;}
+
+

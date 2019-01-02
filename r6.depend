@@ -2,7 +2,7 @@
 1545655336 source:c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\r6\main.cpp
 	<iostream>
 
-1546452454 source:c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\main.cpp
+1546469998 source:c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\main.cpp
 	<iostream>
 	<vector>
 	<cstring>
@@ -31,32 +31,32 @@
 1545689871 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\r6\exceptions.h
 	<exception>
 
-1546355466 source:c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\filepath\filepath.cpp
-	"../Filepath.h"
+1546469848 source:c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\filepath\filepath.cpp
 	<string>
 	<fstream>
 	<functional>
 	<iostream>
 	<bitset>
+	"../Filepath.h"
 
-1546339962 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\filepath.h
+1546469791 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\filepath.h
 	<string>
 
-1546444544 source:c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\bmp.cpp
+1546469435 source:c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\bmp.cpp
 	<Windows.h>
 	<fstream>
 	<cassert>
 	"_ImageFormat.h"
 	"BMP.h"
 
-1546351224 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\_imageformat.h
+1546469073 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\_imageformat.h
 	"../Filepath.h"
 	"../DataStructures/Color.h"
 	"ImageBuffer.h"
 
 1545758923 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\color.h
 
-1546452336 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\imagebuffer.h
+1546469030 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\imagebuffer.h
 	<vector>
 	"../DataStructures/Color.h"
 	"../DataStructures/Point.h"
@@ -241,27 +241,26 @@
 	"begin_code.h"
 	"close_code.h"
 
-1546452628 source:c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\imagebuffer.cpp
-	"ImageBuffer.h"
+1546469868 source:c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\imagebuffer.cpp
 	<iostream>
 	<algorithm>
 	<cassert>
 	<math.h>
 	<utility>
+	"ImageBuffer.h"
 
-1546349015 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\bmp.h
+1546469247 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\bmp.h
 	"_ImageFormat.h"
 	<string>
 
-1546451137 source:c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\r6.cpp
+1546469886 source:c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\r6.cpp
 	<stdint.h>
 	<fstream>
 	<bitset>
 	<cmath>
-	"../Filepath.h"
 	"R6.h"
 
-1546450916 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\r6.h
+1546469075 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\r6.h
 	<exception>
 	<vector>
 	<fstream>
