@@ -47,5 +47,8 @@ bool Filepath::initialized() {return !_raw.empty();}
 // SETTERS
 void Filepath::ext(string newExt) {
     _ext = newExt;
-    _raw = _path + _filename + "." + _ext;
+    if (_path.empty())
+        _raw = _filename + "." + _ext;
+    else
+        _raw = _path + "\\" + _filename + "." + _ext;
 }

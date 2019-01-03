@@ -17,7 +17,7 @@ R6::R6() {
         r = (i & 0b00000011);
         g = (i & 0b00001100) >> 2;
         b = (i & 0b00110000) >> 4;
-        _palette.push_back(Color(values[r], values[g], values[b]));
+        _palette.push_back(Color(values[r], values[g], values[b]).saturation(0.8));
     }
 
     // generate grayscale palette

@@ -13,6 +13,10 @@ ImageBuffer::ImageBuffer(int widthToSet, int heightToSet, int depthToSet) {
     _grayscale = false;
 }
 
+ImageBuffer::~ImageBuffer() {
+    if (_root) delete _root;
+}
+
 
 void ImageBuffer::init(int widthToSet, int heightToSet, int depthToSet) {
     _width = widthToSet;
@@ -112,6 +116,15 @@ void ImageBuffer::generateMatrix() {
             }
             _indexMatrix[x][y] = bestIndex;
         }
+    }
+}
+
+
+void ImageBuffer::generateBufferFromPalette(int nSquaresInRow) {
+    this->init(nSquaresInRow, _palette.size() / nSquaresInRow);
+
+    for (int i = 0; i < _palette.size(); ++i) {
+        _buffer[i/nSquaresInRow][i % nSquaresInRow] = _palette[i];
     }
 }
 

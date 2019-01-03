@@ -19,6 +19,14 @@ struct Color {
         std::cout << "[" << r << " " << g << " " << b << "]";
     }
 
+    Color& saturation(float value) {
+        long avg = (r + g + b) / 3;
+        r = avg * (1 - value) + r * value;
+        g = avg * (1 - value) + g * value;
+        b = avg * (1 - value) + b * value;
+        return *this;
+    }
+
     bool operator!= (Color const &col) {
         return r != col.r || g != col.g || b != col.b;
     }

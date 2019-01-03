@@ -100,6 +100,14 @@ int main(int nArg, char* args[]) {
                     break;
                     case R6::Mode::FIXED:
                         buffer.palette(r6.palette());
+
+                        /* save palette
+                        {
+                            buffer.generateBufferFromPalette();
+                            output.ext("bmp");
+                            bmp.save(output, &buffer);
+                            return 666;
+                        }*/
                     break;
                     case R6::Mode::GRAYSCALE:
                         buffer.palette(r6.palette());

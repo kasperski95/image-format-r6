@@ -8,12 +8,14 @@
 class ImageBuffer {
 public:
     ImageBuffer(int width=0, int height=0, int depth=8);
+    ~ImageBuffer();
     void init(int width, int height, int colorDepth=-1);
 
     // GENERATORS
     void generatePalette(int nColors);  // from buffer
     void generateMatrix();              // from buffer & matrix
     void generateBuffer();              // from palette & matrix
+    void generateBufferFromPalette(int nSquaresInRow=8);
 
     // DITHERING
     void dither();
@@ -41,13 +43,11 @@ private:
     std::vector<std::vector<Color>> _buffer;
     std::vector<std::vector<int>> _indexMatrix;
     std::vector<Color> _palette;
-
     int _width;
     int _height;
     int _depth;
     bool _grayscale;
 
-    // USED BY DEDICATED PALETTE GENERATOR
     struct Node{
         Node* parent;
         std::vector<Point<int>> pixels;
