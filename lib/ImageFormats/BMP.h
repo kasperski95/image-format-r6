@@ -9,8 +9,8 @@ public:
     BMP();
 
     // CORE
-    void load(Filepath &filepath, ImageBuffer* buffer) override;
-    void save(Filepath &filepath, ImageBuffer* buffer) override;
+    unsigned int load(Filepath &filepath, ImageBuffer* buffer) override;
+    unsigned int save(Filepath &filepath, ImageBuffer* buffer) override;
 
 private:
     std::string _fileHeader;

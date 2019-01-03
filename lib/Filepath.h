@@ -11,14 +11,14 @@ public:
     void init(std::string filepath);
 
     // GETTERS
-    const char* path() const;
-    const char* filename() const;
-    const char* ext() const;
+    std::string path() const;
+    std::string filename() const;
+    std::string ext() const;
     const char* raw() const;
     bool initialized();
 
     // SETTERS
-    void ext(const char* newExt);
+    void ext(std::string newExt);
 
 private:
     std::string _path;

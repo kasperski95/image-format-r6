@@ -1,6 +1,6 @@
 #include <string>
 #include <fstream>
-#include <functional> //bad_function_call
+#include <functional>           //bad_function_call
 #include <iostream>
 #include <bitset>
 #include "../Filepath.h"
@@ -37,15 +37,15 @@ void Filepath::init(string filepath) {
 
 
 // GETTERS
-const char* Filepath::path() const {return _path.c_str();}
-const char* Filepath::filename() const {return _filename.c_str();}
-const char* Filepath::ext() const {return _ext.c_str();}
+string Filepath::path() const {return _path.c_str();}
+string Filepath::filename() const {return _filename.c_str();}
+string Filepath::ext() const {return _ext.c_str();}
 const char* Filepath::raw() const {return _raw.c_str();}
 bool Filepath::initialized() {return !_raw.empty();}
 
 
 // SETTERS
-void Filepath::ext(const char* newExt) {
+void Filepath::ext(string newExt) {
     _ext = newExt;
     _raw = _path + _filename + "." + _ext;
 }

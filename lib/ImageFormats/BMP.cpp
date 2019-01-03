@@ -13,7 +13,7 @@ BMP::BMP() :
 
 
 // CORE
-void BMP::load(Filepath &filepath, ImageBuffer* buffer) {
+unsigned int BMP::load(Filepath &filepath, ImageBuffer* buffer) {
     std::ifstream file(filepath.raw(), std::ios::binary);
     if (file) {
         BITMAPFILEHEADER bmFileHeader;
@@ -36,11 +36,13 @@ void BMP::load(Filepath &filepath, ImageBuffer* buffer) {
             }
             file.seekg(padding, std::ios::cur);
         }
+        return bmFileHeader.bfSize;
     }
+    return 0;
 }
 
 
-void BMP::save(Filepath &filepath, ImageBuffer* buffer) {
+unsigned int BMP::save(Filepath &filepath, ImageBuffer* buffer) {
     std::ofstream file(filepath.raw(), std::ios::binary);
 
     if (file) {
@@ -60,7 +62,11 @@ void BMP::save(Filepath &filepath, ImageBuffer* buffer) {
                 file << 0;
             }
         }
+        file.close();
+        return _fileHeader.size() + _infoHeader.size() + (_bytesPerPixel* buffer->width() + padding) * buffer->height();
     }
+
+    return 0;
 }
 
 //=================================================================

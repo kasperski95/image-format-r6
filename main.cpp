@@ -20,7 +20,7 @@ struct bad_syntax : public std::exception {
 
 struct bad_file_extension : public std::exception {
     const char* what() const noexcept override {
-        return "Incorrect extension.";
+        return "Unsupported extension.";
     }
 };
 
@@ -44,7 +44,7 @@ int main(int nArg, char* args[]) {
 
             // --mode
             if (strcmp(args[i], "-m") == 0 || strcmp(args[i], "--mode") == 0) {
-                if (nArg >= i+3) {
+                if (nArg >= i+2) {
                     if (strcmp(args[i+1], "dedicated") == 0) {
                         r6.mode = R6::Mode::DEDICATED; i++; continue;
                     } else if (strcmp(args[i+1], "fixed") == 0) {
@@ -82,17 +82,18 @@ int main(int nArg, char* args[]) {
         if (!source.initialized() ||
         none_of(allowedExts.begin(), allowedExts.end(), [&source](std::string ext){return ext == source.ext();}) ||
         (output.initialized() && none_of( allowedExts.begin(), allowedExts.end(), [&output](std::string ext){return ext == output.ext();}))) {
-            throw bad_syntax();
+            throw bad_file_extension();
         }
 
 
         // core
         {
-            // loading
-            if (strcmp(source.ext(), "bmp") == 0) {
-                bmp.load(source, &buffer);
+            unsigned int sourceFileSize;
+            // load
+            if (source.ext() == "bmp") {
+                sourceFileSize = bmp.load(source, &buffer);
 
-                // choosing palette
+                // choose palette
                 switch(r6.mode) {
                     case R6::Mode::DEDICATED:
                         buffer.generatePalette(64);
@@ -106,20 +107,26 @@ int main(int nArg, char* args[]) {
                     break;
                 }
 
-                // dithering
+                // dither
                 if (dithering) {
                     buffer.dither();
                 }
-            } else if (strcmp(source.ext(), "r6") == 0) {
-                r6.load(source, &buffer);
+            } else if (source.ext() == "r6") {
+                sourceFileSize = r6.load(source, &buffer);
             }
 
-            // saving
-            if (strcmp(output.ext(), "bmp") == 0) {
-                bmp.save(output, &buffer);
-            } else if (strcmp(output.ext(), "r6") == 0) {
-                r6.save(output, &buffer);
+            // save
+            unsigned int outputFileSize;
+            if (output.ext() == "bmp") {
+                outputFileSize = bmp.save(output, &buffer);
+            } else if (output.ext() == "r6") {
+                outputFileSize = r6.save(output, &buffer);
             }
+
+            // print result
+            std::cout << source.ext() << ": " << sourceFileSize << " B | ";
+            std::cout << output.ext() << ": " << outputFileSize << " B | ";
+            std::cout << round((float)outputFileSize / sourceFileSize * 100) << " %" << std::endl;
         }
 
     } catch (std::exception& e) {

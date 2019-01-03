@@ -2,13 +2,15 @@
 #include <fstream>
 #include <bitset>
 #include <cmath>
+#include <sys/stat.h>
 #include "R6.h"
 
 
 R6::R6() {
+    // default mode
     this->mode = Mode::DEDICATED;
 
-    // generate palette
+    // generate fixed palette
     int r, g, b;
     std::vector<int> values {0, 85, 170, 255};
     for (int i = 0; i < 64; ++i) {
@@ -28,14 +30,21 @@ R6::R6() {
 
 
 // CORE
-void R6::load(Filepath &filepath, ImageBuffer* buffer) {
+unsigned int R6::load(Filepath &filepath, ImageBuffer* buffer) {
     std::ifstream file(filepath.raw(), std::ios::binary);
-    if (!file) {
-        throw bad_sourceFile();
-    }
+    if (!file) throw bad_source();
 
     Header header;
     file.read(reinterpret_cast<char*>(&header), sizeof(header));
+
+    // verify header
+    if (header.version != '1') throw bad_filesize();
+
+    // verify file size
+    struct stat st;
+    stat(filepath.raw(), &st);
+    if (st.st_size != header.fileSize) throw bad_filesize();
+
 
     switch(header.mode) {
         case 1: this->mode = Mode::DEDICATED; break;
@@ -46,7 +55,7 @@ void R6::load(Filepath &filepath, ImageBuffer* buffer) {
     // read palette
     switch(mode) {
         case Mode::DEDICATED:
-            for (int i = 0; i < header.paletteSize; ++i) {
+            for (int i = 0; i < header.nPaletteImportantColors; ++i) {
             char r = file.get();
             char g = file.get();
             char b = file.get();
@@ -72,11 +81,11 @@ void R6::load(Filepath &filepath, ImageBuffer* buffer) {
         bitstring += std::bitset<8>((unsigned char)c).to_string();
 
     int index, x = 0, y = 0;
-    for (int i = 0; i < bitstring.size() - 7; i += 7) {
+    for (int i = 0; i < bitstring.size() - 6; i += 6) {
         index = 0;
 
-        for (int j = 1; j < 7; ++j) {
-            index += (bitstring[i+j] - '0') * pow(2, 6 - j);
+        for (int j = 0; j < 6; ++j) {
+            index += (bitstring[i+j] - '0') * pow(2, 5 - j);
         }
 
         buffer->index(x, y, index);
@@ -88,16 +97,18 @@ void R6::load(Filepath &filepath, ImageBuffer* buffer) {
     }
 
     buffer->generateBuffer();
+
+    return header.fileSize;
 }
 
 
-void R6::save(Filepath &filepath, ImageBuffer* buffer) {
+unsigned int R6::save(Filepath &filepath, ImageBuffer* buffer) {
     std::ofstream file(filepath.raw(), std::ios::binary);
 
     if (file) {
         // prepare header
         Header header;
-        header.version = 1;
+        header.version = '1';
 
         switch(mode) {
             case Mode::DEDICATED: header.mode = 1; break;
@@ -105,52 +116,67 @@ void R6::save(Filepath &filepath, ImageBuffer* buffer) {
             case Mode::GRAYSCALE: header.mode = 3; break;
         }
 
-        header.paletteSize = 0;
-        if (mode == Mode::DEDICATED)
-            header.paletteSize = buffer->paletteSize();
+        header.offset = sizeof(Header);
+        header.nPaletteImportantColors = 0;
+        if (mode == Mode::DEDICATED) {
+            header.nPaletteImportantColors = buffer->paletteSize();
+            header.offset = sizeof(Header) + 64 * 3;
+        }
 
-        header.offset = sizeof(Header) + header.paletteSize * 3;
-        header.fileSize = 0; //TODO
         header.width = buffer->width();
         header.height = buffer->height();
 
-        file.write(reinterpret_cast<char*>(&header), sizeof(header));
-
-        // (palette [64 * 3])
-        if (mode == Mode::DEDICATED) {
-            unsigned char r, g, b;
-            for (int i = 0; i < buffer->paletteSize(); ++i) {
-                r = (unsigned char)buffer->palette(i).r;
-                g = (unsigned char)buffer->palette(i).g;
-                b = (unsigned char)buffer->palette(i).b;
-                file.put(r);
-                file.put(g);
-                file.put(b);
-            }
-            for (int i = 0; i < 64 - buffer->paletteSize(); ++i) {
-                file.put(0);
-                file.put(0);
-                file.put(0);
-            }
-        }
-
-        // data
+        // prepare data
         // TODO: Rice algorithm
         std::string bitstring;
         int index;
         for (int y = 0; y < buffer->height(); ++y) {
             for (int x = 0; x < buffer->width(); ++x) {
-                bitstring += '0';
                 index = buffer->index(x, y);
                 for (int i = 5; i >= 0; --i) {
                     bitstring += (index >> i) % 2 + '0';
                 }
             }
         }
+        while(bitstring.size() % 8)
+            bitstring += '0';
 
-        _saveBitstring(file, bitstring);
+        // calculate file size
+        header.fileSize = header.offset + (bitstring.length() / 8);
+
+        // SAVE
+        {
+            // save header
+            file.write(reinterpret_cast<char*>(&header), sizeof(header));
+
+            // prepare & save dedicated palette
+            if (mode == Mode::DEDICATED) {
+                unsigned char r, g, b;
+                for (int i = 0; i < buffer->paletteSize(); ++i) {
+                    r = (unsigned char)buffer->palette(i).r;
+                    g = (unsigned char)buffer->palette(i).g;
+                    b = (unsigned char)buffer->palette(i).b;
+                    file.put(r);
+                    file.put(g);
+                    file.put(b);
+                }
+                for (int i = 0; i < 64 - buffer->paletteSize(); ++i) {
+                    file.put(0);
+                    file.put(0);
+                    file.put(0);
+                }
+            }
+
+            // save data
+            _saveBitstring(file, bitstring);
+        }
+
         file.close();
+
+        return header.fileSize;
     }
+
+    return 0;
 }
 
 

@@ -12,7 +12,7 @@ public:
         uint8_t version;
         uint8_t mode;
         uint8_t offset;
-        uint8_t paletteSize;
+        uint8_t nPaletteImportantColors;
         uint32_t fileSize;
         uint32_t width;
         uint32_t height;
@@ -30,8 +30,8 @@ public:
     R6();
 
     // CORE
-    void load(Filepath &filepath, ImageBuffer* buffer) override;
-    void save(Filepath &filepath, ImageBuffer* buffer) override;
+    unsigned int load(Filepath &filepath, ImageBuffer* buffer) override;
+    unsigned int save(Filepath &filepath, ImageBuffer* buffer) override;
 
     // GETTERS
     const std::vector<Color>& palette();
