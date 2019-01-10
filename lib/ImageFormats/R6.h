@@ -11,8 +11,9 @@ public:
     struct Header {
         uint8_t version;
         uint8_t mode;
-        uint8_t offset;
-        uint8_t nPaletteImportantColors;
+        uint8_t dithering;
+        uint8_t nColors;
+        uint32_t offset;
         uint32_t fileSize;
         uint32_t width;
         uint32_t height;
@@ -24,7 +25,7 @@ public:
         GRAYSCALE
     };
     Mode mode;
-
+    bool dithering;
     //-----------------------------------------------------------------
 
     R6();
@@ -32,6 +33,8 @@ public:
     // CORE
     unsigned int load(Filepath &filepath, ImageBuffer* buffer) override;
     unsigned int save(Filepath &filepath, ImageBuffer* buffer) override;
+
+    void print(Filepath &filepath);
 
     // GETTERS
     const std::vector<Color>& palette();

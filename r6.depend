@@ -2,7 +2,7 @@
 1545655336 source:c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\r6\main.cpp
 	<iostream>
 
-1546511464 source:c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\main.cpp
+1547140658 source:c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\main.cpp
 	<iostream>
 	<vector>
 	<cstring>
@@ -56,7 +56,14 @@
 
 1545758923 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\color.h
 
-1546509460 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\imagebuffer.h
+1545758923 ated upstream
+
+1547140658 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\imagebuffer.h
+	<vector>
+	"../DataStructures/Color.h"
+	"../DataStructures/Point.h"
+
+1547136960 shed changes
 	<vector>
 	"../DataStructures/Color.h"
 	"../DataStructures/Point.h"
@@ -241,7 +248,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1546510084 source:c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\imagebuffer.cpp
+1547140658 source:c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\imagebuffer.cpp
 	<iostream>
 	<algorithm>
 	<cassert>
@@ -253,15 +260,17 @@
 	"_ImageFormat.h"
 	<string>
 
-1546511153 source:c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\r6.cpp
+1547142413 source:c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\r6.cpp
 	<stdint.h>
 	<fstream>
 	<bitset>
 	<cmath>
 	<sys/stat.h>
+	<iostream>
+	"../compression-util.h"
 	"R6.h"
 
-1546474062 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\r6.h
+1547140658 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\imageformats\r6.h
 	<exception>
 	<vector>
 	<fstream>
@@ -273,4 +282,11 @@
 
 1545906843 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\datastructures\point.h
 	<iostream>
+
+1547140650 c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\compression-util.h
+	<string>
+
+1547140650 source:c:\users\arkad\onedrive\documents\edukacja\semestr iii\grafika komputerowa i multimedia\_private\r6\lib\compression-util.cpp
+	<cmath>
+	"compression-util.h"
 

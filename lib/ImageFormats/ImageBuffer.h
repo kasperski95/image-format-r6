@@ -66,6 +66,9 @@ private:
 
     //-----------------------------------------------------------------
 
+    // DEDICATED PALETTE STUFF
     Color _quantify(Node* node);
     void _selectNodes(int amount, std::vector<Node*> &selected, int index=0);
+
+    void _sortPaletteByColorPopularity();
 };

@@ -119,6 +119,7 @@ int main(int nArg, char* args[]) {
                 if (dithering) {
                     buffer.dither();
                 }
+                r6.dithering = dithering;
             } else if (source.ext() == "r6") {
                 sourceFileSize = r6.load(source, &buffer);
             }
@@ -135,6 +136,11 @@ int main(int nArg, char* args[]) {
             std::cout << source.ext() << ": " << sourceFileSize << " B | ";
             std::cout << output.ext() << ": " << outputFileSize << " B | ";
             std::cout << round((float)outputFileSize / sourceFileSize * 100) << " %" << std::endl;
+
+            if (source.ext() == "r6") {
+                std::cout << std::endl << "R6 HEADER" << std::endl;
+                r6.print(source);
+            }
         }
 
     } catch (std::exception& e) {

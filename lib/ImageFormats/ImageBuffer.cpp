@@ -59,27 +59,9 @@ void ImageBuffer::generatePalette(int nColors) {
        _palette.push_back(selectedNodes[i]->color);
     }
 
-    // sort palette by popularity of colors
+    // sort palette and update indexes
     this->generateMatrix();
-    {
-        using colorOccurance = std::pair<int,int>;
-        std::vector<colorOccurance> occurances(_palette.size());
-        for (int i = 0; i < _palette.size(); ++i) {
-            occurances[i].first = i;
-        }
-        for (int y = 0; y < _height; ++y) {
-            for (int x = 0; x < _width; ++x) {
-                occurances[_indexMatrix[x][y]].second++;
-            }
-        }
-        std::sort(occurances.begin(), occurances.end(), [](colorOccurance &l, colorOccurance r) {
-            return l.second > r.second;
-        });
-
-        for (int i = 0; i < _palette.size(); ++i) {
-            std::swap(_palette[i], _palette[occurances[i].first]);
-        }
-    }
+    _sortPaletteByColorPopularity();
     this->generateMatrix();
 }
 
@@ -255,6 +237,27 @@ void ImageBuffer::_selectNodes(int limit, std::vector<Node*> &selected, int inde
 }
 
 
+void ImageBuffer::_sortPaletteByColorPopularity() {
+    using colorOccurance = std::pair<int,int>;
+    std::vector<colorOccurance> occurances(_palette.size());
+    for (int i = 0; i < _palette.size(); ++i) {
+        occurances[i].first = i;
+    }
+    for (int y = 0; y < _height; ++y) {
+        for (int x = 0; x < _width; ++x) {
+            occurances[_indexMatrix[x][y]].second++;
+        }
+    }
+    std::sort(occurances.begin(), occurances.end(), [](colorOccurance &l, colorOccurance r) {
+        return l.second > r.second;
+    });
+
+    for (int i = 0; i < _palette.size(); ++i) {
+        std::swap(_palette[i], _palette[occurances[i].first]);
+    }
+}
+
+
 // GETTERS
 std::vector<Color> ImageBuffer::palette() {return _palette;}
 Color ImageBuffer::px(int x, int y) {return _buffer[x][y];}
@@ -265,7 +268,7 @@ int ImageBuffer::height() {return _height;}
 int ImageBuffer::index(int x, int y) {return _indexMatrix[x][y];}
 
 // SETTERS
-void ImageBuffer::palette(std::vector<Color> paletteToSet) {_palette = paletteToSet; this->generateMatrix();}
+void ImageBuffer::palette(std::vector<Color> paletteToSet) {_palette = paletteToSet; this->generateMatrix(); _sortPaletteByColorPopularity(); this->generateMatrix();}
 void ImageBuffer::palette(Color color) {_palette.push_back(color);}
 void ImageBuffer::px(int x, int y, Color color) {_buffer[x][y] = color;}
 void ImageBuffer::width(int widthToSet) {_width = widthToSet;}
