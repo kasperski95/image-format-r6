@@ -4,6 +4,7 @@
 #include <cmath>
 #include <sys/stat.h>
 #include "R6.h"
+#include "../compression-util.h"
 
 
 R6::R6() {
@@ -52,24 +53,14 @@ unsigned int R6::load(Filepath &filepath, ImageBuffer* buffer) {
         case 3: this->mode = Mode::GRAYSCALE; break;
     }
 
-    // read palette
-    switch(mode) {
-        case Mode::DEDICATED:
-            for (int i = 0; i < header.nPaletteImportantColors; ++i) {
-            char r = file.get();
-            char g = file.get();
-            char b = file.get();
-            buffer->palette(Color(r, g, b));
-        }
-        break;
-        case Mode::FIXED:
-            buffer->palette(_palette);
-        break;
-        case Mode::GRAYSCALE:
-            buffer->palette(_grayscale);
-        break;
-    }
 
+    // read palette
+    for (int i = 0; i < header.nPaletteImportantColors; ++i) {
+        char r = file.get();
+        char g = file.get();
+        char b = file.get();
+        buffer->palette(Color(r, g, b));
+    }
 
     // read indexMatrix
     buffer->init(header.width, header.height);
@@ -80,7 +71,27 @@ unsigned int R6::load(Filepath &filepath, ImageBuffer* buffer) {
     while(file.get(c))
         bitstring += std::bitset<8>((unsigned char)c).to_string();
 
-    int index, x = 0, y = 0;
+    int index, x = 0, y = 0, offset=0;
+
+    while( y < header.height ){
+        int prefix_end = bitstring.find('0', offset);
+
+        std::string next_value = bitstring.substr(offset, prefix_end+4-offset);
+
+        index = rice_decode(8, next_value);
+
+        offset += prefix_end+4-offset;
+
+        buffer->index(x, y, index);
+        x++;
+        if (x >= header.width) {
+            x = 0;
+            y++;
+        }
+    }
+
+
+    /*
     for (int i = 0; i < bitstring.size() - 6; i += 6) {
         index = 0;
 
@@ -95,6 +106,7 @@ unsigned int R6::load(Filepath &filepath, ImageBuffer* buffer) {
             y++;
         }
     }
+    */
 
     buffer->generateBuffer();
 
@@ -118,24 +130,24 @@ unsigned int R6::save(Filepath &filepath, ImageBuffer* buffer) {
 
         header.offset = sizeof(Header);
         header.nPaletteImportantColors = 0;
-        if (mode == Mode::DEDICATED) {
+        //if (mode == Mode::DEDICATED) {
             header.nPaletteImportantColors = buffer->paletteSize();
             header.offset = sizeof(Header) + 64 * 3;
-        }
+        //}
 
         header.width = buffer->width();
         header.height = buffer->height();
 
         // prepare data
-        // TODO: Rice algorithm
-        std::string bitstring;
+        std::string bitstring = "";
         int index;
         for (int y = 0; y < buffer->height(); ++y) {
             for (int x = 0; x < buffer->width(); ++x) {
                 index = buffer->index(x, y);
-                for (int i = 5; i >= 0; --i) {
-                    bitstring += (index >> i) % 2 + '0';
-                }
+                bitstring += rice_encode(8, index);
+                //for (int i = 5; i >= 0; --i) {
+                //    bitstring += (index >> i) % 2 + '0';
+                //}
             }
         }
         while(bitstring.size() % 8)
@@ -150,7 +162,7 @@ unsigned int R6::save(Filepath &filepath, ImageBuffer* buffer) {
             file.write(reinterpret_cast<char*>(&header), sizeof(header));
 
             // prepare & save dedicated palette
-            if (mode == Mode::DEDICATED) {
+            //if (mode == Mode::DEDICATED) {
                 unsigned char r, g, b;
                 for (int i = 0; i < buffer->paletteSize(); ++i) {
                     r = (unsigned char)buffer->palette(i).r;
@@ -165,7 +177,7 @@ unsigned int R6::save(Filepath &filepath, ImageBuffer* buffer) {
                     file.put(0);
                     file.put(0);
                 }
-            }
+            //}
 
             // save data
             _saveBitstring(file, bitstring);
