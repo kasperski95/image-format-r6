@@ -290,3 +290,275 @@
 	<cmath>
 	"compression-util.h"
 
+1547309971 source:e:\dane\programowanie\grafika-projekt\r6\lib\filepath\filepath.cpp
+	<string>
+	<fstream>
+	<functional>
+	<iostream>
+	<bitset>
+	"../Filepath.h"
+
+1547309971 e:\dane\programowanie\grafika-projekt\r6\lib\filepath.h
+	<string>
+
+1547333440 source:e:\dane\programowanie\grafika-projekt\r6\lib\imageformats\bmp.cpp
+	<Windows.h>
+	<fstream>
+	<iostream>
+	<cassert>
+	<string>
+	<SDL.h>
+	<SDL_video.h>
+	"_ImageFormat.h"
+	"BMP.h"
+	"../SDL-util.h"
+
+1547309971 e:\dane\programowanie\grafika-projekt\r6\lib\imageformats\_imageformat.h
+	"../Filepath.h"
+	"../DataStructures/Color.h"
+	"ImageBuffer.h"
+
+1547309971 e:\dane\programowanie\grafika-projekt\r6\lib\datastructures\color.h
+	<iostream>
+	<cmath>
+
+1547332715 e:\dane\programowanie\grafika-projekt\r6\lib\imageformats\imagebuffer.h
+	<vector>
+	"../DataStructures/Color.h"
+	"../DataStructures/Point.h"
+
+1547309971 e:\dane\programowanie\grafika-projekt\r6\lib\datastructures\point.h
+	<iostream>
+
+1547313547 e:\dane\programowanie\grafika-projekt\r6\lib\imageformats\bmp.h
+	"_ImageFormat.h"
+	<string>
+
+1547332760 source:e:\dane\programowanie\grafika-projekt\r6\lib\imageformats\imagebuffer.cpp
+	<iostream>
+	<algorithm>
+	<cassert>
+	<math.h>
+	<utility>
+	"ImageBuffer.h"
+
+1547334296 source:e:\dane\programowanie\grafika-projekt\r6\lib\imageformats\r6.cpp
+	<stdint.h>
+	<fstream>
+	<bitset>
+	<cmath>
+	<sys/stat.h>
+	<iostream>
+	"../compression-util.h"
+	"R6.h"
+
+1547309971 e:\dane\programowanie\grafika-projekt\r6\lib\compression-util.h
+	<string>
+
+1547309971 e:\dane\programowanie\grafika-projekt\r6\lib\imageformats\r6.h
+	<exception>
+	<vector>
+	<fstream>
+	"_ImageFormat.h"
+
+1547334192 source:e:\dane\programowanie\grafika-projekt\r6\main.cpp
+	<iostream>
+	<vector>
+	<cstring>
+	<string>
+	<algorithm>
+	"lib/Filepath.h"
+	"lib/ImageFormats/ImageBuffer.h"
+	"lib/ImageFormats/BMP.h"
+	"lib/ImageFormats/R6.h"
+
+1547309971 source:e:\dane\programowanie\grafika-projekt\r6\lib\compression-util.cpp
+	<cmath>
+	"compression-util.h"
+
+1255796850 e:\dane\programowanie\grafika-projekt\r6\sdl-1.2.14\include\sdl.h
+	"SDL_main.h"
+	"SDL_stdinc.h"
+	"SDL_audio.h"
+	"SDL_cdrom.h"
+	"SDL_cpuinfo.h"
+	"SDL_endian.h"
+	"SDL_error.h"
+	"SDL_events.h"
+	"SDL_loadso.h"
+	"SDL_mutex.h"
+	"SDL_rwops.h"
+	"SDL_thread.h"
+	"SDL_timer.h"
+	"SDL_video.h"
+	"SDL_version.h"
+	"begin_code.h"
+	"close_code.h"
+
+1255796850 e:\dane\programowanie\grafika-projekt\r6\sdl-1.2.14\include\sdl_main.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+	"begin_code.h"
+	"close_code.h"
+
+1255796850 e:\dane\programowanie\grafika-projekt\r6\sdl-1.2.14\include\sdl_stdinc.h
+	"SDL_config.h"
+	<sys/types.h>
+	<stdio.h>
+	<stdlib.h>
+	<stddef.h>
+	<stdarg.h>
+	<stdlib.h>
+	<malloc.h>
+	<stddef.h>
+	<stdarg.h>
+	<memory.h>
+	<string.h>
+	<strings.h>
+	<inttypes.h>
+	<stdint.h>
+	<ctype.h>
+	<iconv.h>
+	"begin_code.h"
+	<alloca.h>
+	<malloc.h>
+	<malloc.h>
+	<malloc.h>
+	<stdlib.h>
+	"close_code.h"
+
+1255796864 e:\dane\programowanie\grafika-projekt\r6\sdl-1.2.14\include\sdl_config.h
+	"SDL_platform.h"
+	<stdarg.h>
+
+1255796850 e:\dane\programowanie\grafika-projekt\r6\sdl-1.2.14\include\sdl_platform.h
+
+1255796850 e:\dane\programowanie\grafika-projekt\r6\sdl-1.2.14\include\begin_code.h
+
+1255796850 e:\dane\programowanie\grafika-projekt\r6\sdl-1.2.14\include\close_code.h
+
+1255796850 e:\dane\programowanie\grafika-projekt\r6\sdl-1.2.14\include\sdl_audio.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_endian.h"
+	"SDL_mutex.h"
+	"SDL_thread.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1255796850 e:\dane\programowanie\grafika-projekt\r6\sdl-1.2.14\include\sdl_error.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1255796850 e:\dane\programowanie\grafika-projekt\r6\sdl-1.2.14\include\sdl_endian.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1255796850 e:\dane\programowanie\grafika-projekt\r6\sdl-1.2.14\include\sdl_mutex.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1255796850 e:\dane\programowanie\grafika-projekt\r6\sdl-1.2.14\include\sdl_thread.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_mutex.h"
+	"begin_code.h"
+	<process.h>
+	"close_code.h"
+
+1255796850 e:\dane\programowanie\grafika-projekt\r6\sdl-1.2.14\include\sdl_rwops.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1255796850 e:\dane\programowanie\grafika-projekt\r6\sdl-1.2.14\include\sdl_cdrom.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1255796850 e:\dane\programowanie\grafika-projekt\r6\sdl-1.2.14\include\sdl_cpuinfo.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1255796850 e:\dane\programowanie\grafika-projekt\r6\sdl-1.2.14\include\sdl_events.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_active.h"
+	"SDL_keyboard.h"
+	"SDL_mouse.h"
+	"SDL_joystick.h"
+	"SDL_quit.h"
+	"begin_code.h"
+	"close_code.h"
+
+1255796850 e:\dane\programowanie\grafika-projekt\r6\sdl-1.2.14\include\sdl_active.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1255796850 e:\dane\programowanie\grafika-projekt\r6\sdl-1.2.14\include\sdl_keyboard.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_keysym.h"
+	"begin_code.h"
+	"close_code.h"
+
+1255796850 e:\dane\programowanie\grafika-projekt\r6\sdl-1.2.14\include\sdl_keysym.h
+
+1255796850 e:\dane\programowanie\grafika-projekt\r6\sdl-1.2.14\include\sdl_mouse.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1255796850 e:\dane\programowanie\grafika-projekt\r6\sdl-1.2.14\include\sdl_video.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1255796850 e:\dane\programowanie\grafika-projekt\r6\sdl-1.2.14\include\sdl_joystick.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1255796850 e:\dane\programowanie\grafika-projekt\r6\sdl-1.2.14\include\sdl_quit.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+
+1255796850 e:\dane\programowanie\grafika-projekt\r6\sdl-1.2.14\include\sdl_loadso.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1255796850 e:\dane\programowanie\grafika-projekt\r6\sdl-1.2.14\include\sdl_timer.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1255796850 e:\dane\programowanie\grafika-projekt\r6\sdl-1.2.14\include\sdl_version.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1547332402 e:\dane\programowanie\grafika-projekt\r6\lib\sdl-util.h
+	"SDL.h"
+
+1547332384 source:e:\dane\programowanie\grafika-projekt\r6\lib\sdl-util.cpp
+	"SDL-util.h"
+

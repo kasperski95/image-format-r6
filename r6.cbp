@@ -41,8 +41,15 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="-std=c++11" />
 			<Add option="-fexceptions" />
+			<Add directory="SDL-1.2.14/include" />
 		</Compiler>
+		<Linker>
+			<Add library="SDL.dll" />
+			<Add directory="SDL-1.2.14/lib" />
+		</Linker>
+		<Unit filename="SDL.dll" />
 		<Unit filename="lib/DataStructures/Color.h" />
 		<Unit filename="lib/DataStructures/Point.h" />
 		<Unit filename="lib/Filepath.h" />
@@ -54,6 +61,10 @@
 		<Unit filename="lib/ImageFormats/R6.cpp" />
 		<Unit filename="lib/ImageFormats/R6.h" />
 		<Unit filename="lib/ImageFormats/_ImageFormat.h" />
+		<Unit filename="lib/SDL-util.cpp" />
+		<Unit filename="lib/SDL-util.h" />
+		<Unit filename="lib/compression-util.cpp" />
+		<Unit filename="lib/compression-util.h" />
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />

@@ -266,6 +266,7 @@ int ImageBuffer::paletteSize() {return _palette.size();}
 int ImageBuffer::width() {return _width;}
 int ImageBuffer::height() {return _height;}
 int ImageBuffer::index(int x, int y) {return _indexMatrix[x][y];}
+int ImageBuffer::depth() {return _depth; }
 
 // SETTERS
 void ImageBuffer::palette(std::vector<Color> paletteToSet) {_palette = paletteToSet; this->generateMatrix(); _sortPaletteByColorPopularity(); this->generateMatrix();}

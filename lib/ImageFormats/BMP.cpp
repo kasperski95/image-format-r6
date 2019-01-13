@@ -1,17 +1,82 @@
 #include <Windows.h>
 #include <fstream>
+#include <iostream>
 #include <cassert>
+#include <string>
+#include <SDL.h>
+#include <SDL_video.h>
 #include "_ImageFormat.h"
 #include "BMP.h"
+#include "../SDL-util.h"
 
 
-
-BMP::BMP() :
-    _fileHeader(14, 0),
-    _infoHeader(40, 0)
+BMP::BMP() //:
+//    _fileHeader(14, 0),
+//    _infoHeader(40, 0)
 {}
 
 
+
+unsigned int BMP::load(Filepath &filepath, ImageBuffer* buffer){
+
+    SDL_Surface* loaded_bmp = SDL_LoadBMP(filepath.raw());
+
+    if( loaded_bmp != NULL ){
+        int width = loaded_bmp->w;
+        int height = loaded_bmp->h;
+        buffer->init( width, height, loaded_bmp->format->BitsPerPixel);
+
+        SDL_LockSurface(loaded_bmp);
+
+        Uint8 *r = new Uint8; Uint8 *g = new Uint8; Uint8 *b = new Uint8;
+
+        for (int y = 0; y < buffer->height() ; y++) {
+            for (int x = 0; x < buffer->width(); x++) {
+
+                SDL_GetRGB(get_SDL_pixel(loaded_bmp, x, y), loaded_bmp->format, r, g, b);
+                buffer->px(x, y, Color(*r, *g, *b));
+
+                //std::cout << "(" << (int)*r << "," << (int)*g << "," << (int)*b << "),";
+            }
+        }
+
+        SDL_UnlockSurface(loaded_bmp);
+
+
+        return buffer->width() * buffer->height() * loaded_bmp->format->BytesPerPixel;
+    } else {
+        throw std::runtime_error( std::string("BMP file open failed (") + filepath.path() + "): " + SDL_GetError() );
+    }
+
+    return 0;
+}
+
+
+
+unsigned int BMP::save(Filepath &filepath, ImageBuffer* buffer) {
+    SDL_Surface *surface = SDL_CreateRGBSurface(0, buffer->width(), buffer->height(), buffer->depth(), 0, 0, 0, 0);
+
+    SDL_LockSurface(surface);
+    for(int y=0; y<buffer->height(); y++){
+        for (int x = 0; x < buffer->width(); x++) {
+            Color color =  buffer->px(x,y);
+            //std::cout << "(" << (int)color.r << "," << (int)color.g << "," << (int)color.b << "),";
+            put_SDL_pixel(surface, x, y, color.r, color.g, color.b);
+        }
+    }
+
+    int status = SDL_SaveBMP(surface, filepath.raw());
+
+    SDL_UnlockSurface(surface);
+
+    if( status != 0 ){
+        throw std::runtime_error( std::string("BMP file open failed (") + filepath.path() + "): " + SDL_GetError() );
+    }
+
+    return buffer->width() * buffer->height() * surface->format->BytesPerPixel;
+}
+
+/*
 // CORE
 unsigned int BMP::load(Filepath &filepath, ImageBuffer* buffer) {
     std::ifstream file(filepath.raw(), std::ios::binary);
@@ -40,8 +105,9 @@ unsigned int BMP::load(Filepath &filepath, ImageBuffer* buffer) {
     }
     return 0;
 }
+*/
 
-
+/*
 unsigned int BMP::save(Filepath &filepath, ImageBuffer* buffer) {
     std::ofstream file(filepath.raw(), std::ios::binary);
 
@@ -68,9 +134,10 @@ unsigned int BMP::save(Filepath &filepath, ImageBuffer* buffer) {
 
     return 0;
 }
-
+*/
 //=================================================================
 
+/*
 void BMP::_createFileHeader(ImageBuffer* buffer, int padding) {
     int fileSize = _fileHeader.size() + _infoHeader.size() + (_bytesPerPixel* buffer->width() + padding) * buffer->height();
 
@@ -99,3 +166,4 @@ void BMP::_createInfoHeader(ImageBuffer* buffer){
     _infoHeader[12] = (unsigned char)(1);
     _infoHeader[14] = (unsigned char)(_bytesPerPixel * 8);
 }
+*/

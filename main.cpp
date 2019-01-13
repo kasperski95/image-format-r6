@@ -27,7 +27,7 @@ struct bad_file_extension : public std::exception {
 //=================================================================
 
 int main(int nArg, char* args[]) {
-    std::vector<std::string> allowedExts {"r6", "bmp"};
+    std::vector<std::string> allowedExts {"r6", "R6", "bmp", "BMP"};
     Filepath source, output;
     ImageBuffer buffer;
     R6 r6;
@@ -90,7 +90,7 @@ int main(int nArg, char* args[]) {
         {
             unsigned int sourceFileSize;
             // load
-            if (source.ext() == "bmp") {
+            if (source.ext() == "bmp" || source.ext() == "BMP") {
                 sourceFileSize = bmp.load(source, &buffer);
 
                 // choose palette
@@ -120,15 +120,15 @@ int main(int nArg, char* args[]) {
                     buffer.dither();
                 }
                 r6.dithering = dithering;
-            } else if (source.ext() == "r6") {
+            } else if (source.ext() == "r6" || source.ext() == "R6") {
                 sourceFileSize = r6.load(source, &buffer);
             }
 
             // save
             unsigned int outputFileSize;
-            if (output.ext() == "bmp") {
+            if (output.ext() == "bmp" || output.ext() == "BMP") {
                 outputFileSize = bmp.save(output, &buffer);
-            } else if (output.ext() == "r6") {
+            } else if (output.ext() == "r6" || output.ext() == "R6") {
                 outputFileSize = r6.save(output, &buffer);
             }
 
@@ -137,7 +137,7 @@ int main(int nArg, char* args[]) {
             std::cout << output.ext() << ": " << outputFileSize << " B | ";
             std::cout << round((float)outputFileSize / sourceFileSize * 100) << " %" << std::endl;
 
-            if (source.ext() == "r6") {
+            if (source.ext() == "r6" || source.ext() == "R6") {
                 std::cout << std::endl << "R6 HEADER" << std::endl;
                 r6.print(source);
             }

@@ -13,12 +13,12 @@ public:
     unsigned int save(Filepath &filepath, ImageBuffer* buffer) override;
 
 private:
-    std::string _fileHeader;
-    std::string _infoHeader;
-    const int _bytesPerPixel = 3;
+//    std::string _fileHeader;
+//    std::string _infoHeader;
+//    const int _bytesPerPixel = 3;
 
     //-----------------------------------------------------------------
 
-    void _createFileHeader(ImageBuffer* buffer, int paddingSize);
-    void _createInfoHeader(ImageBuffer* buffer);
+//    void _createFileHeader(ImageBuffer* buffer, int paddingSize);
+//    void _createInfoHeader(ImageBuffer* buffer);
 };

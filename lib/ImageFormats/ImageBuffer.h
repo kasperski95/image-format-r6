@@ -28,6 +28,7 @@ public:
     int index(int x, int y);
     int width();
     int height();
+    int depth();
 
     // SETTERS
     void px(int x, int y, Color color);
