@@ -7,8 +7,8 @@
 
 
 
-ImageBuffer::ImageBuffer(int widthToSet, int heightToSet, int depthToSet) {
-    this->init(widthToSet, heightToSet, depthToSet);
+ImageBuffer::ImageBuffer(int widthToSet, int heightToSet, int channelDepthToSet) {
+    this->init(widthToSet, heightToSet, channelDepthToSet);
     _root = nullptr;
     _grayscale = false;
 }
@@ -18,12 +18,12 @@ ImageBuffer::~ImageBuffer() {
 }
 
 
-void ImageBuffer::init(int widthToSet, int heightToSet, int depthToSet) {
+void ImageBuffer::init(int widthToSet, int heightToSet, int channelDepthToSet) {
     _width = widthToSet;
     _height = heightToSet;
 
-    if (depthToSet != -1)
-        _depth = depthToSet;
+    if (channelDepthToSet != -1)
+        _channelDepth = channelDepthToSet;
 
     _buffer.resize(_width);
     for(int i = 0; i < _buffer.size(); ++i)
@@ -125,9 +125,11 @@ void ImageBuffer::dither() {
         for (int x = 0; x < _width; ++x) {
 
             for (int i = 0; i < _palette.size(); ++i) {
+
                 error.r = _buffer[x][y].r + errors[x][y].r - _palette[i].r;
                 error.g = _buffer[x][y].g + errors[x][y].g - _palette[i].g;
                 error.b = _buffer[x][y].b + errors[x][y].b - _palette[i].b;
+
                 if (i == 0) {
                     colorID = 0;
                     minError = error;
@@ -181,9 +183,9 @@ Color ImageBuffer::_quantify(Node* node) {
             x = node->pixels[i].x;
             y = node->pixels[i].y;
 
-            childIndex  = (_buffer[x][y].r >> (_depth - node->level - 1)) % 2;
-            childIndex += ((_buffer[x][y].g >> (_depth - node->level - 1)) % 2) * 2;
-            childIndex += ((_buffer[x][y].b >> (_depth - node->level - 1)) % 2) * 4;
+            childIndex  = (_buffer[x][y].r >> (_channelDepth - node->level - 1)) % 2;
+            childIndex += ((_buffer[x][y].g >> (_channelDepth - node->level - 1)) % 2) * 2;
+            childIndex += ((_buffer[x][y].b >> (_channelDepth - node->level - 1)) % 2) * 4;
             node->children[childIndex].pixels.push_back(Point<int>(x,y));
         }
 
@@ -266,7 +268,7 @@ int ImageBuffer::paletteSize() {return _palette.size();}
 int ImageBuffer::width() {return _width;}
 int ImageBuffer::height() {return _height;}
 int ImageBuffer::index(int x, int y) {return _indexMatrix[x][y];}
-int ImageBuffer::depth() {return _depth; }
+int ImageBuffer::channelDepth() {return _channelDepth; }
 
 // SETTERS
 void ImageBuffer::palette(std::vector<Color> paletteToSet) {_palette = paletteToSet; this->generateMatrix(); _sortPaletteByColorPopularity(); this->generateMatrix();}

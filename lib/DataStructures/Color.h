@@ -51,6 +51,7 @@ struct Color {
     }
 
     bool operator<(const Color &rhs) {
-        return (abs(r)*0.299 + abs(g)*0.587 + abs(b)*0.114) < (abs(rhs.r)*0.299 + abs(rhs.g)*0.587 + abs(rhs.b)*0.114);
+        return (abs(r) + abs(g) + abs(b)) < (abs(rhs.r) + abs(rhs.g) + abs(rhs.b));
+        //return (abs(r)*0.299 + abs(g)*0.587 + abs(b)*0.114) < (abs(rhs.r)*0.299 + abs(rhs.g)*0.587 + abs(rhs.b)*0.114);
     }
 };

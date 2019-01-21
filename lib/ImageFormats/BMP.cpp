@@ -24,7 +24,7 @@ unsigned int BMP::load(Filepath &filepath, ImageBuffer* buffer){
     if( loaded_bmp != NULL ){
         int width = loaded_bmp->w;
         int height = loaded_bmp->h;
-        buffer->init( width, height, loaded_bmp->format->BitsPerPixel);
+        buffer->init( width, height);
 
         SDL_LockSurface(loaded_bmp);
 
@@ -43,7 +43,12 @@ unsigned int BMP::load(Filepath &filepath, ImageBuffer* buffer){
         SDL_UnlockSurface(loaded_bmp);
 
 
-        return buffer->width() * buffer->height() * loaded_bmp->format->BytesPerPixel;
+        std::ifstream file(filepath.raw(), std::ios::binary);
+        if (file) {
+            BITMAPFILEHEADER bmFileHeader;
+            file.read(reinterpret_cast<char*>(&bmFileHeader), sizeof(bmFileHeader));
+            return bmFileHeader.bfSize;
+        }
     } else {
         throw std::runtime_error( std::string("BMP file open failed (") + filepath.path() + "): " + SDL_GetError() );
     }
@@ -54,7 +59,7 @@ unsigned int BMP::load(Filepath &filepath, ImageBuffer* buffer){
 
 
 unsigned int BMP::save(Filepath &filepath, ImageBuffer* buffer) {
-    SDL_Surface *surface = SDL_CreateRGBSurface(0, buffer->width(), buffer->height(), buffer->depth(), 0, 0, 0, 0);
+    SDL_Surface *surface = SDL_CreateRGBSurface(0, buffer->width(), buffer->height(), 16, 0, 0, 0, 0);
 
     SDL_LockSurface(surface);
     for(int y=0; y<buffer->height(); y++){

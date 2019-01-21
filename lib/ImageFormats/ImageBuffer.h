@@ -7,9 +7,9 @@
 
 class ImageBuffer {
 public:
-    ImageBuffer(int width=0, int height=0, int depth=8);
+    ImageBuffer(int width=0, int height=0, int channelDepth=8);
     ~ImageBuffer();
-    void init(int width, int height, int colorDepth=-1);
+    void init(int width, int height, int channelDepth=-1);
 
     // GENERATORS
     void generatePalette(int nColors);  // from buffer
@@ -28,7 +28,7 @@ public:
     int index(int x, int y);
     int width();
     int height();
-    int depth();
+    int channelDepth();
 
     // SETTERS
     void px(int x, int y, Color color);
@@ -46,7 +46,7 @@ private:
     std::vector<Color> _palette;
     int _width;
     int _height;
-    int _depth;
+    int _channelDepth;
     bool _grayscale;
 
     struct Node{

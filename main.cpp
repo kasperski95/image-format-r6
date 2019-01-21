@@ -86,6 +86,9 @@ int main(int nArg, char* args[]) {
         }
 
 
+
+
+
         // core
         {
             unsigned int sourceFileSize;
@@ -100,14 +103,6 @@ int main(int nArg, char* args[]) {
                     break;
                     case R6::Mode::FIXED:
                         buffer.palette(r6.palette());
-
-                        /* save palette
-                        {
-                            buffer.generateBufferFromPalette();
-                            output.ext("bmp");
-                            bmp.save(output, &buffer);
-                            return 666;
-                        }*/
                     break;
                     case R6::Mode::GRAYSCALE:
                         buffer.palette(r6.palette());
@@ -116,10 +111,9 @@ int main(int nArg, char* args[]) {
                 }
 
                 // dither
-                if (dithering) {
-                    buffer.dither();
-                }
+                if (dithering) buffer.dither();
                 r6.dithering = dithering;
+
             } else if (source.ext() == "r6" || source.ext() == "R6") {
                 sourceFileSize = r6.load(source, &buffer);
             }
@@ -135,7 +129,7 @@ int main(int nArg, char* args[]) {
             // print result
             std::cout << source.ext() << ": " << sourceFileSize << " B | ";
             std::cout << output.ext() << ": " << outputFileSize << " B | ";
-            std::cout << round((float)outputFileSize / sourceFileSize * 100) << " %" << std::endl;
+            std::cout << (int)round(((float)outputFileSize - sourceFileSize) / sourceFileSize * 100) << " %" << std::endl;
 
             if (source.ext() == "r6" || source.ext() == "R6") {
                 std::cout << std::endl << "R6 HEADER" << std::endl;
