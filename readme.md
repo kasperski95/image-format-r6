@@ -1,0 +1,1 @@
+http://visperfect.com/share/r6-specyfikacja.pdf
